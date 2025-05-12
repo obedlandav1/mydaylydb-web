@@ -1,0 +1,14 @@
+<header>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="navbar bg-body-tertiary">
+            <a class="navbar-brand" href="#">
+                <img 
+                    src="RESOURCES/svg/database-fill.svg" 
+                    alt="inicio"
+                    height="30px"
+                    width="30px" />
+                MydaylyDatabase
+            </a>
+        </div>
+    </nav>
+</header>
