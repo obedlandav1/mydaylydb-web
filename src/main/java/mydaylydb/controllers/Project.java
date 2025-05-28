@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
 package mydaylydb.controllers;
 
 import java.io.IOException;
@@ -8,18 +12,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import mydaylydb.DAO.AccountDAO;
-import mydaylydb.DAO.ComboDAO;
 import mydaylydb.DAO.CompanyDAO;
-import mydaylydb.entities.AccountEntity;
+import mydaylydb.DAO.ContractDAO;
+import mydaylydb.DAO.ProjectDAO;
+import mydaylydb.entities.ProjectEntity;
 import mydaylydb.entities.CompanyEntity;
+import mydaylydb.entities.ContractEntity;
 
-public class Account extends HttpServlet {
+public class Project extends HttpServlet {
 
     HttpSession session;
     CompanyDAO objCompany = new CompanyDAO();
-    AccountDAO objAccount = new AccountDAO();
-    ComboDAO objCombo = new ComboDAO();
+    ProjectDAO objProject = new ProjectDAO();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -33,80 +37,76 @@ public class Account extends HttpServlet {
                 break;
             }
             case "create": {
-                createAccount(request, response);
+                createProject(request, response);
                 break;
             }
             case "read": {
-                readAccount(request, response);
+                readProject(request, response);
                 break;
             }
             case "update": {
-                updateAccount(request, response);
+                updateProject(request, response);
                 break;
             }
             case "delete": {
-                deleteAccount(request, response);
+                deleteProject(request, response);
                 break;
             }
         }
     }
 
-    protected void createAccount(HttpServletRequest request, HttpServletResponse response)
+    protected void createProject(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setRazonsocial_id(request.getParameter("companyid"));
-        accountEntity.setBancos_id(request.getParameter("newbanco"));
-        accountEntity.setTipocuenta_id(request.getParameter("newtipo"));
-        accountEntity.setTipomoneda_id(request.getParameter("newmoneda"));
-        accountEntity.setNumerocuenta(request.getParameter("newcuenta"));
-        accountEntity.setNumerointerbancario(request.getParameter("newcci"));
-        accountEntity.setEstado(1);
-
-        boolean flg = objAccount.Create(accountEntity);
+        ProjectEntity projectEntity = new ProjectEntity();
+        projectEntity.setRazonsocial_id(request.getParameter("companyid"));
+        projectEntity.setNombrecorto(request.getParameter("newcorto"));
+        projectEntity.setNombrelargo(request.getParameter("newlargo"));
+        projectEntity.setPlazoproyecto(Integer.parseInt(request.getParameter("newplazo")));
+        projectEntity.setMontoproyecto(Double.valueOf(request.getParameter("newmonto")));
+        projectEntity.setEstado(1);
+        
+        boolean flg = objProject.Create(projectEntity);
         response.setContentType("application/json");
         response.getWriter().write("{\"success\": " + flg + "}");
-        //request.getRequestDispatcher("/account?action=load&company=" + company).forward(request, response);
+        //request.getRequestDispatcher("/project?action=load&company=" + company).forward(request, response);
     }
 
-    protected void readAccount(HttpServletRequest request, HttpServletResponse response)
+    protected void readProject(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
-            int id = Integer.parseInt(request.getParameter("id"));
+            int id = Integer.parseInt(request.getParameter("projectid"));
             response.setCharacterEncoding("UTF-8");
             PrintWriter out = response.getWriter();
-            out.print(objAccount.ReadById(id));
+            out.print(objProject.ReadById(id));
             out.flush();
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID inválido");
         }
     }
 
-    protected void updateAccount(HttpServletRequest request, HttpServletResponse response)
+    protected void updateProject(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setId(Integer.parseInt(request.getParameter("accountid")));
-        accountEntity.setBancos_id(request.getParameter("editbanco"));
-        accountEntity.setTipocuenta_id(request.getParameter("edittipo"));
-        accountEntity.setTipomoneda_id(request.getParameter("editmoneda"));
-        accountEntity.setNumerocuenta(request.getParameter("editcuenta"));
-        accountEntity.setNumerointerbancario(request.getParameter("editcci"));
-
-        boolean flg = objAccount.Update(accountEntity);
+        ProjectEntity projectEntity = new ProjectEntity();
+        projectEntity.setId(Integer.parseInt(request.getParameter("projectid")));
+        projectEntity.setNombrecorto(request.getParameter("editcorto"));
+        projectEntity.setNombrelargo(request.getParameter("editlargo"));
+        projectEntity.setPlazoproyecto(Integer.parseInt(request.getParameter("editplazo")));
+        projectEntity.setMontoproyecto(Double.valueOf(request.getParameter("editmonto")));
+        
+        boolean flg = objProject.Update(projectEntity);
         response.setContentType("application/json");
         response.getWriter().write("{\"success\": " + flg + "}");
-        //request.getRequestDispatcher("/account?action=load&company=" + company).forward(request, response);
+        //request.getRequestDispatcher("/project?action=load&company=" + company).forward(request, response);
     }
 
-    protected void deleteAccount(HttpServletRequest request, HttpServletResponse response)
+    protected void deleteProject(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        boolean flg = objAccount.Delete(Integer.parseInt(request.getParameter("id")));
-        response.setContentType("application/json");
-        response.getWriter().write("{\"success\": " + flg + "}");
-        //request.getRequestDispatcher("/account?action=load&company=" + company).forward(request, response);
+        String company = request.getParameter("company");
+        boolean flg = objProject.Delete(Integer.parseInt(request.getParameter("id")));
+        request.getRequestDispatcher("/project?action=load&company=" + company).forward(request, response);
     }
 
     protected void initComponents(HttpServletRequest request, HttpServletResponse response)
@@ -116,16 +116,13 @@ public class Account extends HttpServlet {
         CompanyEntity companyEntity = objCompany.SelectCompanyByName(request.getParameter("company"));
         session.setAttribute("companyses", companyEntity);
 
-        List<AccountEntity> listaCuentas = objAccount.SelectAllAccountsByCompany(companyEntity.getId());
+        List<ProjectEntity> listaProyectos = objProject.SelectAllProjectsByCompany(companyEntity.getId());
 
         request.setAttribute("companies", objCompany.SelectAllCompanyName());
-        request.setAttribute("banks", objCombo.SelectAllBankName());
-        request.setAttribute("accounttype", objCombo.SelectAllAccountType());
-        request.setAttribute("cointype", objCombo.SelectAllCurrencyType());
-        request.setAttribute("showaccounts", !listaCuentas.isEmpty());
-        request.setAttribute("accounts", listaCuentas);
-        
-        request.getRequestDispatcher("/account.jsp").forward(request, response);
+        request.setAttribute("showprojects", !listaProyectos.isEmpty());
+        request.setAttribute("projects", listaProyectos);
+
+        request.getRequestDispatcher("/project.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

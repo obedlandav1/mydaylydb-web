@@ -1,0 +1,132 @@
+package mydaylydb.DAO;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import mydaylydb.entities.ComboEntity;
+import mydaylydb.interfaces.ComboInterface;
+import mydaylydb.utils.Database;
+
+public class ComboDAO implements ComboInterface {
+
+    private ResultSet rs;
+    private PreparedStatement ps;
+    private Statement st;
+    private CallableStatement cl;
+
+    @Override
+    public List<ComboEntity> SelectAllAccountType() {
+        List<ComboEntity> list = new ArrayList<>();
+        Connection con = Database.getConexion();
+        try {
+            ps = con.prepareStatement(SELECT_ACCOUNT_TYPE);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                ComboEntity comboEntity = new ComboEntity();
+                comboEntity.setId(rs.getInt(1));
+                comboEntity.setNombrelargo(rs.getString(2));
+                list.add(comboEntity);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(ComboDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ComboDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<ComboEntity> SelectAllCurrencyType() {
+        List<ComboEntity> list = new ArrayList<>();
+        Connection con = Database.getConexion();
+        try {
+            ps = con.prepareStatement(SELECT_CURRENCY_TYPE);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                ComboEntity comboEntity = new ComboEntity();
+                comboEntity.setId(rs.getInt(1));
+                comboEntity.setNombrelargo(rs.getString(2));
+                list.add(comboEntity);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(ComboDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ComboDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<ComboEntity> SelectAllBankName() {
+        List<ComboEntity> list = new ArrayList<>();
+        Connection con = Database.getConexion();
+        try {
+            ps = con.prepareStatement(SELECT_BANK_OPTIONS);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                ComboEntity comboEntity = new ComboEntity();
+                comboEntity.setId(rs.getInt(1));
+                comboEntity.setNombrelargo(rs.getString(2));
+                list.add(comboEntity);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(ComboDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ComboDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<ComboEntity> SelectAllContractType() {
+        List<ComboEntity> list = new ArrayList<>();
+        Connection con = Database.getConexion();
+        try {
+            ps = con.prepareStatement(SELECT_CONTRACT_TYPE);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                ComboEntity comboEntity = new ComboEntity();
+                comboEntity.setId(rs.getInt(1));
+                comboEntity.setNombrecorto(rs.getString(2));
+                list.add(comboEntity);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(ComboDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ComboDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return list;
+    }
+
+}

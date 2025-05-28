@@ -9,8 +9,7 @@
         <%@include file="WEB-INF/jspf/main.jspf" %>
     </head>
     <body>
-        <%@include file="WEB-INF/jspf/header.jspf" %>
-        <%@include file="WEB-INF/jspf/navbar.jspf" %>        
+        <%@include file="WEB-INF/jspf/header.jspf" %>   
         <section>
             <div class="container-fluid">
                 <div class="row">

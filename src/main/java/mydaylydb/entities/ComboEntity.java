@@ -1,11 +1,11 @@
 package mydaylydb.entities;
 
-public class BankEntity {
+public class ComboEntity {
     
     private int id;
+    private String codigo;
     private String nombrecorto;
     private String nombrelargo;
-    private String estado;
 
     public int getId() {
         return id;
@@ -13,6 +13,14 @@ public class BankEntity {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public String getNombrecorto() {
@@ -31,21 +39,13 @@ public class BankEntity {
         this.nombrelargo = nombrelargo;
     }
 
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public BankEntity() {
+    public ComboEntity() {
     }
    
-    public BankEntity(int id, String nombrecorto, String nombrelargo, String estado) {
+    public ComboEntity(int id, String codigo, String nombrecorto, String nombrelargo) {
         this.id = id;
+        this.codigo = codigo;
         this.nombrecorto = nombrecorto;
         this.nombrelargo = nombrelargo;
-        this.estado = estado;
     }
 }

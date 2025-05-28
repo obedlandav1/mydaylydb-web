@@ -1,5 +1,6 @@
 package mydaylydb.DAO;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,23 +13,29 @@ import java.util.logging.Logger;
 import mydaylydb.entities.CompanyEntity;
 import mydaylydb.interfaces.CompanyInterface;
 import mydaylydb.utils.Database;
-import static mydaylydb.interfaces.LoginInterface.SELECT_PASSWORD;
 
 public class CompanyDAO implements CompanyInterface {
 
     private ResultSet rs;
     private PreparedStatement ps;
     private Statement st;
+    private CallableStatement cl;
 
     @Override
-    public int SelectIdByName(String name) {
-        int id = 0;
+    public CompanyEntity SelectCompanyByName(String name) {
+
+        CompanyEntity companyEntity = new CompanyEntity();
         Connection con = Database.getConexion();
         try {
-            ps = con.prepareStatement(SELECT_ID);
+            ps = con.prepareStatement(SELECT_COMPANY_BY_NAME);
             ps.setString(1, name);
             rs = ps.executeQuery();
-            id = rs.getInt(1);
+            if (rs.next()) {
+                companyEntity.setId(rs.getInt(1));
+                companyEntity.setNombrecorto(rs.getString(2));
+                companyEntity.setNombrelargo(rs.getString(3));
+            }
+            Logger.getLogger(CompanyDAO.class.getName()).log(Level.INFO, null, "success");
         } catch (SQLException e) {
             Logger.getLogger(CompanyDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
@@ -40,7 +47,7 @@ public class CompanyDAO implements CompanyInterface {
                 Logger.getLogger(CompanyDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return id;
+        return companyEntity;
     }
 
     @Override
@@ -53,7 +60,6 @@ public class CompanyDAO implements CompanyInterface {
             while (rs.next()) {
                 CompanyEntity companyEntity = new CompanyEntity();
                 companyEntity.setNombrecorto(rs.getString(1));
-                System.out.println(rs.getString(1));
                 list.add(companyEntity);
             }
         } catch (SQLException e) {

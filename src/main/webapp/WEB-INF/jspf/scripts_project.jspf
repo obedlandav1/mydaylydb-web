@@ -1,0 +1,294 @@
+<script>
+    document.getElementById('create').addEventListener('submit', function (event) {
+        event.preventDefault(); // Evita que el formulario se envíe
+        event.stopPropagation();
+
+        // Campos individuales
+        const corto = document.getElementById('newcorto');
+        const largo = document.getElementById('newlargo');
+        const plazo = document.getElementById('newplazo');
+        const valor = document.getElementById('newmonto');
+
+        // Resetear clases previas
+        [corto, largo, plazo, valor].forEach(field => {
+            field.classList.remove('is-valid', 'is-invalid');
+        });
+
+        // Validar campos
+        if (corto.value === "") {
+            corto.classList.add('is-invalid');
+        } else {
+            corto.classList.add('is-valid');
+        }
+        if (largo.value.trim() === "") {
+            largo.classList.add('is-invalid');
+        } else {
+            largo.classList.add('is-valid');
+        }
+        if (plazo.value === "") {
+            plazo.classList.add('is-invalid');
+        } else {
+            plazo.classList.add('is-valid');
+        }
+        if (valor.value === "") {
+            valor.classList.add('is-invalid');
+        } else {
+            valor.classList.add('is-valid');
+        }
+
+        // Comprobar si todo es válido
+        if (
+                corto.value.trim() !== "" &&
+                largo.value.trim() !== "" &&
+                plazo.value.trim() !== "" &&
+                valor.value.trim() !== ""
+                ) {
+            createproject();
+        }
+    });
+    document.getElementById('edit').addEventListener('submit', function (event) {
+        event.preventDefault(); // Evita que el formulario se envíe
+        event.stopPropagation();
+
+        // Campos individuales
+        const corto = document.getElementById('editcorto');
+        const largo = document.getElementById('editlargo');
+        const plazo = document.getElementById('editplazo');
+        const valor = document.getElementById('editmonto');
+
+        // Resetear clases previas
+        [corto, largo, plazo, valor].forEach(field => {
+            field.classList.remove('is-valid', 'is-invalid');
+        });
+
+        // Validar campos
+        if (corto.value === "") {
+            corto.classList.add('is-invalid');
+        } else {
+            corto.classList.add('is-valid');
+        }
+        if (largo.value === "") {
+            largo.classList.add('is-invalid');
+        } else {
+            largo.classList.add('is-valid');
+        }
+        if (plazo.value === "") {
+            plazo.classList.add('is-invalid');
+        } else {
+            plazo.classList.add('is-valid');
+        }
+        if (valor.value.trim() === "") {
+            valor.classList.add('is-invalid');
+        } else {
+            valor.classList.add('is-valid');
+        }
+
+        // Comprobar si todo es válido
+        if (
+                corto.value.trim() !== "" &&
+                largo.value.trim() !== "" &&
+                plazo.value.trim() !== "" &&
+                valor.value.trim() !== ""
+                ) {
+            editproject();
+        }
+    });
+    function newproject() {
+
+        const companyid = document.getElementById('companyid').value;
+
+        if (companyid == 0) {
+            Swal.fire({
+                title: '¡Error!',
+                text: 'Acción no permitida, debe seleccionar una empresa.',
+                icon: 'info',
+                timer: 2500,
+                showConfirmButton: false,
+                background: '#f0f9ff',
+                confirmButtonColor: '#3085d6'
+            });
+        } else {
+            document.getElementById("staticBackdropCreateLabel").textContent = "Nuevo proyecto";
+            document.getElementById("createmodal").click();
+        }
+    }
+    function createproject() {
+
+        let company = document.getElementById('company').value;
+        let companyid = document.getElementById('companyid').value;
+        
+        let noma = document.getElementById('newcorto').value;
+        let nomb = document.getElementById('newlargo').value;
+        let pla = document.getElementById('newplazo').value;
+        let mon = document.getElementById('newmonto').value;
+
+        fetch('project?action=create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'companyid=' + companyid +
+                    '&newcorto=' + noma +
+                    '&newlargo=' + nomb +
+                    '&newplazo=' + pla +
+                    '&newmonto=' + mon
+        }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: '¡Éxito!',
+                            text: 'Se creó el proyecto correctamente.',
+                            icon: 'info',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            window.location.href = 'project?action=load&company=' + company;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                            icon: 'error',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            window.location.href = 'project?action=load&company=' + company;
+                        });
+                    }
+                })
+                .catch(error => console.error(error));
+    }
+    function loadproject(id) {
+        //Pendiente creacion de un popup para informar de un error en la lectura
+        document.getElementById("staticBackdropEditLabel").textContent = "Editar proyecto";
+
+        fetch('project?action=read&projectid=' + id)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al obtener los datos");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const project = data[0];
+                    console.log(data);
+                    document.getElementById("projectid").value = project.id;
+                    document.getElementById("editcorto").value = project.nombreCorto;
+                    document.getElementById("editlargo").value = project.nombreLargo;
+                    document.getElementById("editplazo").value = project.plazoProyecto;
+                    document.getElementById("editmonto").value = project.montoProyecto;
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        document.getElementById("editmodal").click();
+    }
+    function editproject() {
+
+        let company = document.getElementById('company').value;
+
+        let projectid = document.getElementById('projectid').value;
+        let corto = document.getElementById('editcorto').value;
+        let largo = document.getElementById('editlargo').value;
+        let plazo = document.getElementById('editplazo').value;
+        let valor = document.getElementById('editmonto').value;
+
+        fetch('project?action=update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'projectid=' + projectid +
+                    '&editcorto=' + corto +
+                    '&editlargo=' + largo +
+                    '&editplazo=' + plazo +
+                    '&editmonto=' + valor
+        }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: '¡Éxito!',
+                            text: 'Se actualizó la cuenta correctamente.',
+                            icon: 'info',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            window.location.href = 'project?action=load&company=' + company;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                            icon: 'error',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    }
+                })
+                .catch(error => console.error(error));
+    }
+    function deleteproject(id) {
+
+        let company = document.getElementById('company').value;
+
+        Swal.fire({
+            title: '¿Estás seguro de eliminar esta cuenta?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, continuar',
+            cancelButtonText: 'No, cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: 'Se eliminó la cuenta correctamente.',
+                    icon: 'info',
+                    timer: 1000,
+                    showConfirmButton: false,
+//confirmButtonText: 'Ok',
+                    background: '#f0f9ff',
+                    confirmButtonColor: '#3085d6'
+                }).then(() => {
+                    window.location.href = 'project?action=delete&company=' + company + '&id=' + id;
+                });
+// Aquí puedes continuar con la lógica de "Yes"
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire(
+                        'Cancelado',
+                        'La acción fue cancelada :)',
+                        'error'
+                        );
+// Aquí puedes manejar la lógica de "No"
+            }
+        });
+    }
+    function loadcompany(company) {
+
+        Swal.fire({
+            title: '¡Éxito!',
+            text: 'Seleccionaste la empresa: ' + company,
+            icon: 'info',
+            timer: 1000,
+            showConfirmButton: false,
+//confirmButtonText: 'Ok',
+            background: '#f0f9ff',
+            confirmButtonColor: '#3085d6'
+        }).then(() => {
+            window.location.href = 'project?action=load&company=' + company;
+        });
+    }
+</script>

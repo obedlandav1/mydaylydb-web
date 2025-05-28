@@ -1,13 +1,14 @@
 package mydaylydb.entities;
 
 public class AccountEntity {
-    
+
     private int id;
-    private int razonsocial_id;
-    private int bancos_id;
+    private String razonsocial_id;
+    private String bancos_id;
+    private String tipocuenta_id;
+    private String tipomoneda_id;
     private String numerocuenta;
-    private String tipocuenta;
-    private String monedacuenta;
+    private String numerointerbancario;
     private int estado;
 
     public int getId() {
@@ -18,20 +19,36 @@ public class AccountEntity {
         this.id = id;
     }
 
-    public int getRazonsocial_id() {
+    public String getRazonsocial_id() {
         return razonsocial_id;
     }
 
-    public void setRazonsocial_id(int razonsocial_id) {
+    public void setRazonsocial_id(String razonsocial_id) {
         this.razonsocial_id = razonsocial_id;
     }
 
-    public int getBancos_id() {
+    public String getBancos_id() {
         return bancos_id;
     }
 
-    public void setBancos_id(int bancos_id) {
+    public void setBancos_id(String bancos_id) {
         this.bancos_id = bancos_id;
+    }
+
+    public String getTipocuenta_id() {
+        return tipocuenta_id;
+    }
+
+    public void setTipocuenta_id(String tipocuenta_id) {
+        this.tipocuenta_id = tipocuenta_id;
+    }
+
+    public String getTipomoneda_id() {
+        return tipomoneda_id;
+    }
+
+    public void setTipomoneda_id(String tipomoneda_id) {
+        this.tipomoneda_id = tipomoneda_id;
     }
 
     public String getNumerocuenta() {
@@ -42,20 +59,12 @@ public class AccountEntity {
         this.numerocuenta = numerocuenta;
     }
 
-    public String getTipocuenta() {
-        return tipocuenta;
+    public String getNumerointerbancario() {
+        return numerointerbancario;
     }
 
-    public void setTipocuenta(String tipocuenta) {
-        this.tipocuenta = tipocuenta;
-    }
-
-    public String getMonedacuenta() {
-        return monedacuenta;
-    }
-
-    public void setMonedacuenta(String monedacuenta) {
-        this.monedacuenta = monedacuenta;
+    public void setNumerointerbancario(String numerointerbancario) {
+        this.numerointerbancario = numerointerbancario;
     }
 
     public int getEstado() {
@@ -69,12 +78,14 @@ public class AccountEntity {
     public AccountEntity() {
     }
 
-    public AccountEntity(int razonSocial_id, int bancos_id, String numeroCuenta, String tipoCuenta, String monedaCuenta, int estado) {
-        this.razonsocial_id = razonSocial_id;
+    public AccountEntity(int id, String razonsocial_id, String bancos_id, String tipocuenta_id, String tipomoneda_id, String numerocuenta, String numerointerbancario, int estado) {
+        this.id = id;
+        this.razonsocial_id = razonsocial_id;
         this.bancos_id = bancos_id;
-        this.numerocuenta = numeroCuenta;
-        this.tipocuenta = tipoCuenta;
-        this.monedacuenta = monedaCuenta;
+        this.tipocuenta_id = tipocuenta_id;
+        this.tipomoneda_id = tipomoneda_id;
+        this.numerocuenta = numerocuenta;
+        this.numerointerbancario = numerointerbancario;
         this.estado = estado;
     }
 }

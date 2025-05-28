@@ -1,31 +1,49 @@
 package mydaylydb.controllers;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import mydaylydb.DAO.LoginDAO;
+import mydaylydb.entities.CompanyEntity;
 import mydaylydb.entities.UserEntity;
 
 public class Login extends HttpServlet {
 
     LoginDAO obj = new LoginDAO();
+    HttpSession session;
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+
+        doLogin(request, response);
+
+    }
+
+    protected void doLogin(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         UserEntity userEntity = new UserEntity();
         userEntity.setIdentidadusuario(request.getParameter("user"));
         userEntity.setPasswordusuario(request.getParameter("password"));
-        System.out.println(request.getParameter("password"));
+
         boolean flg = obj.AuthenticateUser(userEntity);
         if (flg) {
-            request.getRequestDispatcher("/home.jsp").forward(request, response);
+            userEntity = obj.SelectUser(request.getParameter("user"));
+            session = request.getSession();
+            session.setAttribute("userses", userEntity);
+            session.setAttribute("companyses", new CompanyEntity());
+
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\": " + flg + "}");
+            //request.getRequestDispatcher("/home.jsp").forward(request, response);;
         } else {
-            request.setAttribute("success", flg);
-            request.getRequestDispatcher("/index.jsp").forward(request, response);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\": " + flg + "}");
+            //request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
     }
 

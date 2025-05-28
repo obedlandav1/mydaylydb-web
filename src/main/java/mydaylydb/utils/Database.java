@@ -3,6 +3,8 @@ package mydaylydb.utils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Database {
 
@@ -14,11 +16,9 @@ public class Database {
             String usr = "mydaylydb";
             String psw = "ablement";
             con = DriverManager.getConnection(url, usr, psw);
-            System.out.println("conexion ok");
-        } catch (ClassNotFoundException ex) {
-            System.out.println("No hay Driver!!" + ex);
-        } catch (SQLException ex) {
-            System.out.println("Error con la BD " + ex);
+            Logger.getLogger(Database.class.getName()).log(Level.INFO, null, "success connection");
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
         return con;
     }

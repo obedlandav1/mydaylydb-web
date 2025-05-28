@@ -1,3 +1,8 @@
-<!--<footer>
-    <small>&COPY; Todos los Derechos Reservados;</small>
-</footer>-->
+<footer class="bg-light text-center py-3 fixed-bottom                                                                                                                   ">
+  <!-- Copyright -->
+  <div class="text-center p-3">
+    © 2025 Copyright:
+    <a class="text-body" href="#">CODE AND NETWORKS DEVELOPMENT EIRL</a>
+  </div>
+  <!-- Copyright -->
+</footer>
