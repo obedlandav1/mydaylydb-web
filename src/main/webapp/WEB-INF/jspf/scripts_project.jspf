@@ -116,7 +116,7 @@
 
         let company = document.getElementById('company').value;
         let companyid = document.getElementById('companyid').value;
-        
+
         let noma = document.getElementById('newcorto').value;
         let nomb = document.getElementById('newlargo').value;
         let pla = document.getElementById('newplazo').value;
@@ -253,26 +253,42 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire({
-                    title: '¡Éxito!',
-                    text: 'Se eliminó la cuenta correctamente.',
-                    icon: 'info',
-                    timer: 1000,
-                    showConfirmButton: false,
-//confirmButtonText: 'Ok',
-                    background: '#f0f9ff',
-                    confirmButtonColor: '#3085d6'
-                }).then(() => {
-                    window.location.href = 'project?action=delete&company=' + company + '&id=' + id;
-                });
-// Aquí puedes continuar con la lógica de "Yes"
+                fetch('project?action=delete&id=' + id)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: '¡Éxito!',
+                                    text: 'Se eliminó el proyecto correctamente.',
+                                    icon: 'info',
+                                    timer: 2500,
+                                    showConfirmButton: false,
+                                    //confirmButtonText: 'Ok',
+                                    background: '#f0f9ff',
+                                    confirmButtonColor: '#3085d6'
+                                }).then(() => {
+                                    window.location.href = 'project?action=load&company=' + company;
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: '¡Error!',
+                                    text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                                    icon: 'error',
+                                    timer: 2500,
+                                    showConfirmButton: false,
+                                    //confirmButtonText: 'Ok',
+                                    background: '#f0f9ff',
+                                    confirmButtonColor: '#3085d6'
+                                });
+                            }
+                        })
+                        .catch(error => console.error(error));
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 Swal.fire(
                         'Cancelado',
                         'La acción fue cancelada :)',
                         'error'
                         );
-// Aquí puedes manejar la lógica de "No"
             }
         });
     }

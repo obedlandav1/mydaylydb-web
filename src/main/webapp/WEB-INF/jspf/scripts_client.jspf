@@ -1,0 +1,228 @@
+<script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const client = document.getElementById('clientname');
+        const id = document.getElementById('clientid');
+        const search = document.getElementById('clientsearch');
+
+        client.addEventListener('input', async () => {
+            const tofind = client.value.trim();
+
+            if (tofind.length < 2) {
+                search.innerHTML = '';
+                return;
+            }
+
+            const rest = await fetch('client?action=find&name=' + tofind);
+            const clients = await rest.json();
+
+            search.innerHTML = '';
+
+            clients.forEach(cli => {
+                const item = document.createElement('li');
+                item.className = 'list-group-item list-group-item-action';
+                item.textContent = cli.nombreCliente;
+                item.setAttribute('tabindex', '0');
+                item.addEventListener('click', () => {
+                    id.value = cli.id;
+                    client.value = cli.nombreCliente;
+                    search.innerHTML = '';
+                });
+                search.appendChild(item);
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!client.contains(e.target) && !search.contains(e.target)) {
+                search.innerHTML = '';
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        let result = '';
+        const clientInput = document.getElementById("clientname");
+        const switchInput = document.getElementById('clientswitch');
+        const container = document.getElementById('createcli');
+
+        fetch('lists?type=id')
+                .then(res => res.json())
+                .then(arr => {
+                    arr.forEach(item => {
+                        result += '<option value="' + item.id + '">' + item.nombreLargo + '</option>';
+                    });
+                });
+        switchInput.addEventListener('change', () => {
+            if (switchInput.checked) {
+                container.innerHTML = `
+                    <div class="form-floating mb-2">
+                        <strong>Registrar cliente</strong>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="cliname" name="cliname">
+                                <label for="floatingInput">Ingrese nombre del cliente</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                    </div>                                                                                        
+                    <div class="row">
+                        <div class="col">  
+                            <div class="form-floating">
+                                <select class="form-select" id="clidoc" name="clidoc" aria-label="Floating label select example">
+                                    <option></option>`
+                        + result +
+                        `</select>
+                                <label for="floatingSelect">Seleccione tipo de documento</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="cliid" name="cliid">
+                                <label for="floatingInput">Ingrese numero identidad cliente</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                    </div>                                                                                        
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="cliadd" name="cliadd">
+                                <label for="floatingInput">Ingrese la direccion del cliente</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="clidis" name="clidis">
+                                <label for="floatingInput">Ingrese el distrito del cliente</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="clicit" name="clicit">
+                                <label for="floatingInput">Ingrese la ciudad del cliente</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                    </div>                                                                                        
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="clitel" name="clitel">
+                                <label for="floatingInput">Ingrese el celular del cliente</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="cliem" name="cliem">
+                                <label for="floatingInput">Ingrese el email del cliente</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                    </div> 
+                    <button type="submit" form="createcli" class="btn btn-primary">Guardar</button>
+                `;
+                clientInput.disabled = true;
+            } else {
+                container.innerHTML = '';
+                clientInput.disabled = false;
+            }
+        });
+    });
+
+    document.getElementById('createcli').addEventListener('submit', function (event) {
+
+        event.preventDefault(); // Evita que el formulario se envíe
+        event.stopPropagation();
+
+        const nom = document.getElementById('cliname');
+        const doc = document.getElementById('clidoc');
+        const ide = document.getElementById('cliid');
+
+        let fields = [nom, doc, ide];
+        fields.forEach(field => {
+            field.classList.remove('is-valid', 'is-invalid');
+        });
+
+        fields.forEach(field => {
+            if (field.value === "") {
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.add('is-valid');
+            }
+        });
+
+        if (
+                nom.value.trim() !== "" &&
+                doc.value.trim() !== "" &&
+                ide.value.trim() !== ""
+                ) {
+            createclient();
+        }
+    });
+
+    function createclient() {
+
+        const companyid = document.getElementById('companyid').value;
+        const nom = document.getElementById('cliname').value;
+        const doc = document.getElementById('clidoc').value;
+        const ide = document.getElementById('cliid').value;
+        const dir = document.getElementById('cliadd').value;
+        const dis = document.getElementById('clidis').value;
+        const cit = document.getElementById('clicit').value;
+        const tel = document.getElementById('clitel').value;
+        const eml = document.getElementById('cliem').value;
+
+        fetch('client?action=create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'companyid=' + companyid +
+                    '&newcli=' + nom +
+                    '&newtype=' + doc +
+                    '&newiden=' + ide +
+                    '&newadd=' + dir +
+                    '&newdist=' + dis +
+                    '&newcity=' + cit +
+                    '&newtel=' + tel +
+                    '&newemail=' + eml
+        }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: '¡Éxito!',
+                            text: 'Se creó el cliente correctamente.',
+                            icon: 'info',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            document.getElementById('createcli').innerHTML = '';
+                            document.getElementById('clientswitch').checked = false;
+                            document.getElementById('clientname').disabled = false;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                            icon: 'error',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    }
+                })
+                .catch(error => console.error(error));
+    }
+</script>

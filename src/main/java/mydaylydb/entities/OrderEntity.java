@@ -1,16 +1,20 @@
 package mydaylydb.entities;
 
-public class ContractEntity {
+public class OrderEntity {
 
     private int id;
     private String proyectos;
-    private String clientes;
-    private String tipocontrato;
+    private String proveedores;
+    private String tipoorden;
     private String tipomoneda;
     private String descripcioncontrato;
-    private int plazocontrato;
+    private int plazoorden;
     private String formapago;
     private String detallepago;
+    private String consideraciones;
+    private double subtotal1;
+    private double tipocambio;
+    private double subtotal2;
     private double exonerado;
     private double imponible;
     private double impuesto;
@@ -33,20 +37,20 @@ public class ContractEntity {
         this.proyectos = proyectos;
     }
 
-    public String getClientes() {
-        return clientes;
+    public String getProveedores() {
+        return proveedores;
     }
 
-    public void setClientes(String clientes) {
-        this.clientes = clientes;
+    public void setProveedores(String proveedores) {
+        this.proveedores = proveedores;
     }
 
-    public String getTipocontrato() {
-        return tipocontrato;
+    public String getTipoorden() {
+        return tipoorden;
     }
 
-    public void setTipocontrato(String tipocontrato) {
-        this.tipocontrato = tipocontrato;
+    public void setTipoorden(String tipoorden) {
+        this.tipoorden = tipoorden;
     }
 
     public String getTipomoneda() {
@@ -65,12 +69,12 @@ public class ContractEntity {
         this.descripcioncontrato = descripcioncontrato;
     }
 
-    public int getPlazocontrato() {
-        return plazocontrato;
+    public int getPlazoorden() {
+        return plazoorden;
     }
 
-    public void setPlazocontrato(int plazocontrato) {
-        this.plazocontrato = plazocontrato;
+    public void setPlazoorden(int plazoorden) {
+        this.plazoorden = plazoorden;
     }
 
     public String getFormapago() {
@@ -87,6 +91,38 @@ public class ContractEntity {
 
     public void setDetallepago(String detallepago) {
         this.detallepago = detallepago;
+    }
+
+    public String getConsideraciones() {
+        return consideraciones;
+    }
+
+    public void setConsideraciones(String consideraciones) {
+        this.consideraciones = consideraciones;
+    }
+
+    public double getSubtotal1() {
+        return subtotal1;
+    }
+
+    public void setSubtotal1(double subtotal1) {
+        this.subtotal1 = subtotal1;
+    }
+
+    public double getTipocambio() {
+        return tipocambio;
+    }
+
+    public void setTipocambio(double tipocambio) {
+        this.tipocambio = tipocambio;
+    }
+
+    public double getSubtotal2() {
+        return subtotal2;
+    }
+
+    public void setSubtotal2(double subtotal2) {
+        this.subtotal2 = subtotal2;
     }
 
     public double getExonerado() {
@@ -129,23 +165,29 @@ public class ContractEntity {
         this.estado = estado;
     }
 
-    public ContractEntity() {
+    public OrderEntity() {
     }
 
-    public ContractEntity(int id, String proyectos_id, String clientes_id, String tipocontrato_id, String tipomoneda_id, String descripcioncontrato, int plazocontrato, String tipopagocontrato, String formapagocontrato, double exonerado, double imponible, double impuesto, double valortotal, int estado) {
+    public OrderEntity(int id, String proyectos, String proveedores, String tipoorden, String tipomoneda, String descripcioncontrato, int plazoorden, String formapago, String detallepago, String consideraciones, double subtotal1, double tipocambio, double subtotal2, double exonerado, double imponible, double impuesto, double valortotal, int estado) {
         this.id = id;
-        this.proyectos = proyectos_id;
-        this.clientes = clientes_id;
-        this.tipocontrato = tipocontrato_id;
-        this.tipomoneda = tipomoneda_id;
+        this.proyectos = proyectos;
+        this.proveedores = proveedores;
+        this.tipoorden = tipoorden;
+        this.tipomoneda = tipomoneda;
         this.descripcioncontrato = descripcioncontrato;
-        this.plazocontrato = plazocontrato;
-        this.formapago = tipopagocontrato;
-        this.detallepago = formapagocontrato;
+        this.plazoorden = plazoorden;
+        this.formapago = formapago;
+        this.detallepago = detallepago;
+        this.consideraciones = consideraciones;
+        this.subtotal1 = subtotal1;
+        this.tipocambio = tipocambio;
+        this.subtotal2 = subtotal2;
         this.exonerado = exonerado;
         this.imponible = imponible;
         this.impuesto = impuesto;
         this.valortotal = valortotal;
         this.estado = estado;
-    }   
+    }
+
+
 }

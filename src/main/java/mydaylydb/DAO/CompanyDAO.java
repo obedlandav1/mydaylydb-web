@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import mydaylydb.entities.CompanyEntity;
 import mydaylydb.interfaces.CompanyInterface;
-import mydaylydb.utils.Database;
+import mydaylydb.utils.DatabaseConn;
 
 public class CompanyDAO implements CompanyInterface {
 
@@ -25,7 +25,7 @@ public class CompanyDAO implements CompanyInterface {
     public CompanyEntity SelectCompanyByName(String name) {
 
         CompanyEntity companyEntity = new CompanyEntity();
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareStatement(SELECT_COMPANY_BY_NAME);
             ps.setString(1, name);
@@ -53,7 +53,7 @@ public class CompanyDAO implements CompanyInterface {
     @Override
     public List<CompanyEntity> SelectAllCompanyName() {
         List<CompanyEntity> list = new ArrayList<>();
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareStatement(SELECT_COMPANY_NAMES);
             rs = ps.executeQuery();

@@ -1,0 +1,269 @@
+<script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const provider = document.getElementById('providername');
+        const id = document.getElementById('providerid');
+        const search = document.getElementById('providersearch');
+
+        provider.addEventListener('input', async () => {
+            const tofind = provider.value.trim();
+
+            if (tofind.length < 2) {
+                search.innerHTML = '';
+                return;
+            }
+
+            const rest = await fetch('provider?action=find&name=' + tofind);
+            const providers = await rest.json();
+
+            search.innerHTML = '';
+
+            providers.forEach(pro => {
+                const item = document.createElement('li');
+                item.className = 'list-group-item list-group-item-action';
+                item.textContent = pro.nombreProveedor;
+                item.setAttribute('tabindex', '0');
+                item.addEventListener('click', () => {
+                    id.value = pro.id;
+                    provider.value = pro.nombreProveedor;
+                    search.innerHTML = '';
+                });
+                search.appendChild(item);
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!provider.contains(e.target) && !search.contains(e.target)) {
+                search.innerHTML = '';
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        let ids = '';
+        let banks = '';
+        const proInput = document.getElementById("providername");
+        const switchInput = document.getElementById('providerswitch');
+        const container = document.getElementById('createprov');
+
+        fetch('lists?type=id')
+                .then(res => res.json())
+                .then(arr => {
+                    arr.forEach(item => {
+                        ids += '<option value="' + item.id + '">' + item.nombreLargo + '</option>';
+                    });
+                });
+
+        fetch('lists?type=bank')
+                .then(res => res.json())
+                .then(arr => {
+                    arr.forEach(item => {
+                        banks += '<option value="' + item.id + '">' + item.nombreLargo + '</option>';
+                    });
+                });
+
+        switchInput.addEventListener('change', () => {
+            if (switchInput.checked) {
+                container.innerHTML = `
+                    <div class="form-floating mb-2">
+                        <strong>Registrar proveedor</strong>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="proname" name="proname">
+                                <label for="floatingInput">Ingrese nombre del proveedor</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                    </div>                                                                                        
+                    <div class="row">
+                        <div class="col"> 
+                            <div class="form-floating">
+                                <select class="form-select" id="prodoc" name="prodoc" aria-label="Floating label select example">
+                                    <option></option>`
+                        + ids +
+                        `</select>
+                                <label for="floatingSelect">Seleccione tipo de documento</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="proid" name="proid">
+                                <label for="floatingInput">Ingrese numero identidad proveedor</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                    </div>                                                                                        
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="proadd" name="proadd">
+                                <label for="floatingInput">Ingrese la direccion del proveedor</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="prodis" name="prodis">
+                                <label for="floatingInput">Ingrese el distrito del proveedor</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="procit" name="procit">
+                                <label for="floatingInput">Ingrese la ciudad del proveedor</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">    
+                        <div class="col">
+                            <div class="form-floating mb-2">
+                                <select class="form-select" id="probank" name="probank" aria-label="Floating label select example">
+                                    <option></option>`
+                        + banks +
+                        `</select>
+                                <label for="floatingSelect">Seleccione tipo de documento</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="proacc" name="proacc">
+                                <label for="floatingInput">Ingrese el numero de cuenta del proveedor</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="procci" name="procci">
+                                <label for="floatingInput">Ingrese el numero interbancario</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                    </div> 
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="protel" name="protel">
+                                <label for="floatingInput">Ingrese el celular del proveedor</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-2">
+                                <input type="text" class="form-control" id="proem" name="proem">
+                                <label for="floatingInput">Ingrese el email del proveedor</label>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                            </div>
+                        </div>
+                    </div> 
+                    <button type="submit" form="createprov" class="btn btn-primary">Guardar</button>
+                `;
+                proInput.disabled = true;
+            } else {
+                container.innerHTML = '';
+                proInput.disabled = false;
+            }
+        });
+    });
+
+    document.getElementById('createprov').addEventListener('submit', function (event) {
+
+        event.preventDefault(); // Evita que el formulario se envíe
+        event.stopPropagation();
+
+        const nom = document.getElementById('proname');
+        const doc = document.getElementById('prodoc');
+        const ide = document.getElementById('proid');
+
+        let fields = [nom, doc, ide];
+        fields.forEach(field => {
+            field.classList.remove('is-valid', 'is-invalid');
+        });
+
+        fields.forEach(field => {
+            if (field.value === "") {
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.add('is-valid');
+            }
+        });
+
+        if (
+                nom.value.trim() !== "" &&
+                doc.value.trim() !== "" &&
+                ide.value.trim() !== ""
+                ) {
+            createprovider();
+        }
+    });
+
+    function createprovider() {
+
+        const nom = document.getElementById('proname').value;
+        const doc = document.getElementById('prodoc').value;
+        const ide = document.getElementById('proid').value;
+        const dir = document.getElementById('proadd').value;
+        const dis = document.getElementById('prodis').value;
+        const cit = document.getElementById('procit').value;
+        const ban = document.getElementById('probank').value;
+        const acc = document.getElementById('proacc').value;
+        const cci = document.getElementById('procci').value;
+        const tel = document.getElementById('protel').value;
+        const eml = document.getElementById('proem').value;
+
+        fetch('provider?action=create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body:   '&newpro=' + nom +
+                    '&newtype=' + doc +
+                    '&newiden=' + ide +
+                    '&newadd=' + dir +
+                    '&newdist=' + dis +
+                    '&newcity=' + cit +
+                    '&newban=' + ban +
+                    '&newacc=' + acc +
+                    '&newcci=' + cci +
+                    '&newtel=' + tel +
+                    '&newemail=' + eml
+        }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: '¡Éxito!',
+                            text: 'Se creó el cliente correctamente.',
+                            icon: 'info',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            document.getElementById('createprov').innerHTML = '';
+                            document.getElementById('providerswitch').checked = false;
+                            document.getElementById('providername').disabled = false;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                            icon: 'error',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    }
+                })
+                .catch(error => console.error(error));
+    }
+
+</script>

@@ -8,8 +8,8 @@
                     alt="inicio"/>
                 MydaylyDatabase
             </a>
-            <c:if test="${sessionScope.companyses.id != ''}">      
-                <a style="position: fixed; right: 0;" class="navbar-brand">Empresa: ${companyses.nombrelargo}</a>
+            <c:if test="${sessionScope.projectses.id != ''}">      
+                <a style="position: fixed; right: 0;" class="navbar-brand">Proyecto: ${projectses.nombrelargo}</a>
             </c:if>  
         </div>   
     </nav>

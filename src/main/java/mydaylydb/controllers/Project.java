@@ -65,7 +65,7 @@ public class Project extends HttpServlet {
         projectEntity.setPlazoproyecto(Integer.parseInt(request.getParameter("newplazo")));
         projectEntity.setMontoproyecto(Double.valueOf(request.getParameter("newmonto")));
         projectEntity.setEstado(1);
-        
+
         boolean flg = objProject.Create(projectEntity);
         response.setContentType("application/json");
         response.getWriter().write("{\"success\": " + flg + "}");
@@ -95,7 +95,7 @@ public class Project extends HttpServlet {
         projectEntity.setNombrelargo(request.getParameter("editlargo"));
         projectEntity.setPlazoproyecto(Integer.parseInt(request.getParameter("editplazo")));
         projectEntity.setMontoproyecto(Double.valueOf(request.getParameter("editmonto")));
-        
+
         boolean flg = objProject.Update(projectEntity);
         response.setContentType("application/json");
         response.getWriter().write("{\"success\": " + flg + "}");
@@ -104,15 +104,23 @@ public class Project extends HttpServlet {
 
     protected void deleteProject(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String company = request.getParameter("company");
+        //String company = request.getParameter("company");
         boolean flg = objProject.Delete(Integer.parseInt(request.getParameter("id")));
-        request.getRequestDispatcher("/project?action=load&company=" + company).forward(request, response);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"success\": " + flg + "}");
+        //request.getRequestDispatcher("/project?action=load&company=" + company).forward(request, response);
     }
 
     protected void initComponents(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect("login.jsp");
+            //request.getRequestDispatcher("/contract.jsp").forward(request, response);
+            return;
+        }
+
         CompanyEntity companyEntity = objCompany.SelectCompanyByName(request.getParameter("company"));
         session.setAttribute("companyses", companyEntity);
 

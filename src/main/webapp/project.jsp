@@ -3,13 +3,13 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Cuentas</title>
+        <title>Proyectos</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <%@include file="WEB-INF/jspf/main.jspf" %>
     </head>
     <body>
-        <%@include file="WEB-INF/jspf/header.jspf" %>
+        <%@include file="WEB-INF/jspf/header_main.jspf" %>
         <!-- Body content-->
         <section class="col-lg-10 offset-lg-1">
             <div class="container-fluid">
@@ -42,18 +42,18 @@
                 <input type="hidden" id="companyid" name="companyid" value="${companyses.id}">
                 <input type="hidden" id="projectid" name="projectid">
                 <div class="d-flex justify-content-between">
-                    <div><h1 style="font-size: 20px;" class="data">Registro:</h1></div>
+                    <div><h1 style="font-size: 35px;" >Registro:</h1></div>
                     <div><button style="width: 200px;" onclick="newproject()" type="button" class="btn btn-primary">Crear proyecto</button></div>
                 </div> 
-                <table style="max-height: 300px; overflow-y: auto;" class="table table-responsive caption-top" id="tbl-project">
-                    <thead>
+                <table style="max-height: 300px; overflow-y: auto;" class="table table-responsive caption-top table-striped" id="tbl-project">
+                    <thead class="table-active text-center align-middle">
                         <tr>
                             <th scope="col">N°</th>
                             <th scope="col">Nombre corto</th>
                             <th scope="col">Nombre completo</th>
                             <th scope="col">Plazo</th>
                             <th scope="col">Monto adjudicado</th>                            
-                            <th scope="col">Acciones</th>
+                            <th style="width: 250px;" scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,10 +68,18 @@
                                     <td>${p.montoproyecto}
                                     </td>
                                     <td>                                       
-                                        <a style="width: 100px;" href="contract?action=load" class="btn btn-info">Contratos</a> 
-                                        <a style="width: 100px;" href="order?action=load" class="btn btn-success">Ordenes</a> 
-                                        <a style="width: 100px;" onclick="loadproject(${p.id})" class="btn btn-warning">Editar</a>
-                                        <a style="width: 100px;" onclick="deleteproject(${p.id})" class="btn btn-danger">Eliminar</a>
+                                        <a style="width: 50px;" href="contract?action=load&project=${p.nombrecorto}" class="btn btn-info">
+                                            <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/contract.svg" width="16" height="16" Title="Contratos" data-bs-toggle="tooltip">                                         
+                                        </a> 
+                                        <a style="width: 50px;" href="order?action=load&project=${p.nombrecorto}" class="btn btn-success">
+                                            <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/order.svg" width="16" height="16" Title="Ordenes" data-bs-toggle="tooltip"> 
+                                        </a> 
+                                        <button style="width: 50px;" onclick="loadproject(${p.id})" type="button" class="btn btn-warning">
+                                            <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/pencil.svg" width="16" height="16" Title="Editar" data-bs-toggle="tooltip"> 
+                                        </button>
+                                        <button style="width: 50px;" onclick="deleteproject(${p.id})" type="button" class="btn btn-danger">
+                                            <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/trash.svg" width="16" height="16" Title="Eliminar" data-bs-toggle="tooltip"> 
+                                        </button>                                            
                                     </td>
                                 </tr>
                             </c:forEach>

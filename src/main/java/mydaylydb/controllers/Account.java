@@ -113,6 +113,12 @@ public class Account extends HttpServlet {
             throws ServletException, IOException {
 
         session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect("login.jsp");
+            //request.getRequestDispatcher("/contract.jsp").forward(request, response);
+            return;
+        }
+        
         CompanyEntity companyEntity = objCompany.SelectCompanyByName(request.getParameter("company"));
         session.setAttribute("companyses", companyEntity);
 

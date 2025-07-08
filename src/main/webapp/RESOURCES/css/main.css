@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+@import url(https://fonts.googleapis.com/css?family=Ubuntu:400);
 
 /**
 *{
@@ -7,6 +7,14 @@
     box-sizing: border-box;
 }
 */
+#btn-collapse{
+    height: 25px;
+    font-size: 10px;
+}
+#btn-detail{
+    width: 16px;
+    height: 16px;
+}
 
 header{
     /**height: 5vh;*/
@@ -22,6 +30,10 @@ header{
     */
 }
 
+body {
+    font-family: "Ubuntu", sans-serif;
+}
+
 section{
     height: 100%;
     width: 100%;
@@ -35,12 +47,8 @@ hr{
     height: 1px;
 }
 
-.col{
-    width: 200px;
-    
-}
-
 #logo {
     height: 50px;
     width: 50px;
 }
+

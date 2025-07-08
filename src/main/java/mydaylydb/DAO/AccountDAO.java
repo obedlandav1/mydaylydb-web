@@ -12,8 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import mydaylydb.entities.AccountEntity;
 import mydaylydb.interfaces.AccountInterface;
-import mydaylydb.utils.Database;
-import mydaylydb.utils.ResultSetToJson;
+import mydaylydb.utils.DatabaseConn;
+import mydaylydb.utils.RStoJSON;
 import org.json.JSONArray;
 
 public class AccountDAO implements AccountInterface {
@@ -27,7 +27,7 @@ public class AccountDAO implements AccountInterface {
     public boolean Create(AccountEntity accountEntity) {
 
         boolean flg = false;
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareStatement(CREATE_ACCOUNT);
             ps.setInt(1, Integer.parseInt(accountEntity.getRazonsocial_id()));
@@ -56,12 +56,12 @@ public class AccountDAO implements AccountInterface {
     @Override
     public JSONArray ReadById(int id) {
         JSONArray JSONString = null;
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareStatement(READ_BY_ID);
             ps.setInt(1, id);
             rs = ps.executeQuery();
-            JSONString = ResultSetToJson.convert(rs);
+            JSONString = RStoJSON.convertRStoJson(rs);
         } catch (SQLException e) {
             Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
@@ -79,7 +79,7 @@ public class AccountDAO implements AccountInterface {
     @Override
     public boolean Update(AccountEntity accountEntity) {
         boolean flg = false;
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             cl = con.prepareCall(UPDATE_ACCOUNT);
             cl.setInt(1, accountEntity.getId());
@@ -107,7 +107,7 @@ public class AccountDAO implements AccountInterface {
     @Override
     public boolean Delete(int Id) {
         boolean flg = false;
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareStatement(DELETE_BY_ID);
             ps.setInt(1, Id);
@@ -130,7 +130,7 @@ public class AccountDAO implements AccountInterface {
     @Override
     public List<AccountEntity> SelectAllAccountsByCompany(int company) {
         List<AccountEntity> list = new ArrayList<>();
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareCall(SELECT_ALL_ACCOUNTS_BY_COMPANY);
             ps.setInt(1, company);

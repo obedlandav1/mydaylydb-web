@@ -1,183 +1,289 @@
 <script>
+    let contador = 0;
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('exonerated').addEventListener('input', totalsum);
+        document.getElementById('taxable').addEventListener('input', totalsum);
+        document.getElementById('tax').addEventListener('input', totalsum);
+    });
     document.getElementById('contractform').addEventListener('submit', function (event) {
         event.preventDefault(); // Evita que el formulario se envíe
         event.stopPropagation();
 
-        const newc = event.target;
+        const cli = document.getElementById('clientname');
+        const tip = document.getElementById('contracttype');
+        const mon = document.getElementById('contractcurrency');
+        const des = document.getElementById('contractdescription');
+        const pla = document.getElementById('contractterm');
+        const exo = document.getElementById('exonerated');
+        const bas = document.getElementById('taxable');
+        const imp = document.getElementById('tax');
+        const tot = document.getElementById('total');
 
-        // Campos individuales
-        const corto = document.getElementById('projectnombrec');
-        const largo = document.getElementById('projectnombrel');
-        const plazo = document.getElementById('projectplazo');
-        const valor = document.getElementById('projectvalor');
-        
-        // Resetear clases previas
-        [corto, largo, plazo, valor].forEach(field => {
+        let fields = [cli, tip, mon, des, pla, exo, bas, imp, tot];
+
+        fields.forEach(field => {
             field.classList.remove('is-valid', 'is-invalid');
         });
 
-        // Validar campos
-        if (corto.value === "") {
-            corto.classList.add('is-invalid');
-        } else {
-            corto.classList.add('is-valid');
-        }
-        if (largo.value.trim() === "") {
-            largo.classList.add('is-invalid');
-        } else {
-            largo.classList.add('is-valid');
-        }
-        if (plazo.value === "") {
-            plazo.classList.add('is-invalid');
-        } else {
-            plazo.classList.add('is-valid');
-        }
-        if (valor.value === "") {
-            valor.classList.add('is-invalid');
-        } else {
-            valor.classList.add('is-valid');
-        }
-
-        // Comprobar si todo es válido
-        if (
-                corto.value.trim() !== "" &&
-                largo.value.trim() !== "" &&
-                plazo.value.trim() !== "" &&
-                valor.value.trim() !== ""
-                ) {
-            Swal.fire({
-                title: '¡Éxito!',
-                text: 'Se creó el proyecto correctamente.',
-                icon: 'info',
-                timer: 1000,
-                showConfirmButton: false,
-                //confirmButtonText: 'Ok',
-                background: '#f0f9ff',
-                confirmButtonColor: '#3085d6'
-            }).then(() => {
-                newc.submit(); // Aquí puedes enviar el formulario
-            });
-        }
-    });
-</script>
-<script>
-    document.getElementById('contractform').addEventListener('submit', function (event) {
-        event.preventDefault(); // Evita que el formulario se envíe
-        event.stopPropagation();
-
-        const editc = event.target;
-
-        // Campos individuales
-        const corto = document.getElementById('projectnombrec');
-        const largo = document.getElementById('projectnombrel');
-        const plazo = document.getElementById('projectplazo');
-        const valor = document.getElementById('projectvalor');
-
-        // Resetear clases previas
-        [corto, largo, plazo, valor].forEach(field => {
-            field.classList.remove('is-valid', 'is-invalid');
+        fields.forEach(field => {
+            if (field.value === "") {
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.add('is-valid');
+            }
         });
+        const totgen = parseFloat(tot.value) || 0;
+        const container = document.getElementById('container-payment');
+        const items = container.querySelectorAll('input[name="amount"]');
 
-        // Validar campos
-        if (corto.value === "") {
-            corto.classList.add('is-invalid');
-        } else {
-            corto.classList.add('is-valid');
-        }
-        if (largo.value === "") {
-            largo.classList.add('is-invalid');
-        } else {
-            largo.classList.add('is-valid');
-        }
-        if (plazo.value === "") {
-            plazo.classList.add('is-invalid');
-        } else {
-            plazo.classList.add('is-valid');
-        }
-        if (valor.value.trim() === "") {
-            valor.classList.add('is-invalid');
-        } else {
-            valor.classList.add('is-valid');
-        }
-        
-        // Comprobar si todo es válido
-        if (
-                corto.value.trim() !== "" &&
-                largo.value.trim() !== "" &&
-                plazo.value.trim() !== "" &&
-                valor.value.trim() !== ""
-                ) {
+        let totdet = 0;
+        items.forEach(item => {
+            let valor = parseFloat(item.value) || 0;
+            totdet = totdet + valor;
+        });
+        console.log("Sum detalle: " + totdet);
+        console.log("Sum total" + totgen);
+
+        if (totdet !== totgen) {
             Swal.fire({
-                title: '¡Éxito!',
-                text: 'Se actualizó el proyecto correctamente.',
-                icon: 'info',
-                timer: 2500,
-                showConfirmButton: false,
-                //confirmButtonText: 'Ok',
+                title: '¡Error!',
+                text: 'El valor total no coincide con al sumatoria del detalle de pago, verifique.',
+                icon: 'error',
+                showConfirmButton: true,
+                confirmButtonText: 'Ok',
                 background: '#f0f9ff',
                 confirmButtonColor: '#3085d6'
-            }).then(() => {
-                editc.submit(); // Aquí puedes enviar el formulario
             });
+        } else {
+            if (
+                    cli.value.trim() !== "" &&
+                    tip.value.trim() !== "" &&
+                    mon.value.trim() !== "" &&
+                    des.value.trim() !== "" &&
+                    pla.value.trim() !== "" &&
+                    exo.value.trim() !== "" &&
+                    bas.value.trim() !== "" &&
+                    imp.value.trim() !== "" &&
+                    tot.value.trim() !== ""
+                    ) {
+                let actiontype = document.getElementById('form-btn').value;
+                if (actiontype == 'create') {
+                    createcontract();
+                } else if (actiontype == 'edit') {
+                    editcontract();
+                }
+            }
         }
     });
-</script>
-<script>
-    function createproject(company, id) {
-        if (id === 0) {
-            Swal.fire({
-                title: '¡Advertencia!',
-                text: 'Debe seleccionar una empresa antes de crear un proyecto',
-                icon: 'info',
-                timer: 2500,
-                showConfirmButton: false,
-                background: '#f0f9ff',
-                confirmButtonColor: '#3085d6'
-            });
-        } else {
-            const form = document.getElementById("projectform");
-            form.action = 'project?action=create&company=' + company + '&id=' + id;
-            document.getElementById("staticBackdropLabel").textContent = "Nuevo proyecto";
-            document.getElementById("modalbtn").click();
-        }
+    function newcontract() {
+
+        contador = 0;
+        cleanform();
+        document.getElementById('staticBackdropLabel').textContent = "Nuevo contrato";
+        const actionbtn = document.getElementById('form-btn');
+        actionbtn.value = "create";
+        document.getElementById("modal").click();
     }
-    function editproject(company, id) {
+    function createcontract() {
+        const projectname = document.getElementById('projectname').value;
+        const dataToSend = datatosend();
+        fetch('contract?action=create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend)
+        }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: '¡Éxito!',
+                            text: 'Se creó el contrato correctamente.',
+                            icon: 'info',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            window.location.href = 'contract?action=load&project=' + projectname;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                            icon: 'error',
+                            //timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            window.location.href = 'contract?action=load&project=' + projectname;
+                        });
+                    }
+                })
+                .catch(error => console.error(error));
+    }
+    function loadcontract(id) {
 
-        // Cambiar dinámicamente el action
-        const form = document.getElementById("projectform");
-        form.action = 'project?action=update&company='+company+'&id=' + id;
-
+        contador = 0;
+        cleanform();
         document.getElementById("staticBackdropLabel").textContent = "Editar proyecto";
-
-        fetch('project?action=read&company='+company+'&id=' + id)
+        fetch('contract?action=read&id=' + id)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Error al obtener los datos");
                     }
                     return response.json();
                 })
-                .then(resultset => {
-                    console.log("resultset", resultset);
-                    const project = resultset[0];
+                .then(data => {
+                    const contract = data[0];
+                    //document.getElementById('projectid').value = contract.id;
+                    document.getElementById('contractid').value = id;
+                    document.getElementById('clientid').value = contract.clientes_id;
+                    document.getElementById('clientname').value = contract.nombreCliente;
+                    document.getElementById('contracttype').value = contract.tipoContrato_id;
+                    document.getElementById('contractcurrency').value = contract.tipoMoneda_id;
+                    document.getElementById('contractdescription').value = contract.descripcionContrato;
+                    document.getElementById('contractterm').value = contract.plazoContrato;
+                    //===========================================================
+                    let paytype = contract.tipopagoContrato;
+                    const radio = document.querySelector(`input[name="paymenttype"][value="` + paytype + `"]`);
+                    if (radio) {
+                        radio.checked = true;
+                    }
+                    const detail = JSON.parse(contract.detallepagoContrato);
+                    const container = document.getElementById("container-payment");
+                    detail.forEach(field => {
+                        console.log(field);
+                        console.log("Contador!" + contador);
+                        if (paytype === 'VALORIZACIONES') {
+                            contador++;
+                            container.insertAdjacentHTML("beforeend", paymentdetail(paytype));
+                            const payitem = container.querySelector('#item' + contador);
+                            payitem.querySelector('select[name="header"]').value = field.header;
+                            payitem.querySelector('input[name="description"]').value = field.description;
+                            payitem.querySelector('input[name="amount"]').value = field.amount;
+                        } else if (paytype === 'CRONOGRAMA') {
+                            contador++;
+                            container.insertAdjacentHTML("beforeend", paymentdetail(paytype));
+                            flatpickr(".datepicker", {
+                                dateFormat: "d/m/Y",
+                                altInput: true,
+                                altFormat: "F j, Y",
+                                allowInput: true,
+                                locale: "es" // ? idioma español
+                            });
+                            const payitem = container.querySelector('#item' + contador);
+                            payitem.querySelector('select[name="header"]').value = field.header;
+                            payitem.querySelector('input[name="description"]').value = field.description;
+                            payitem.querySelector('input[name="amount"]').value = field.amount;
+                        }
+                    });
+                    //===========================================================
+                    document.getElementById('exonerated').value = contract.exonerado;
+                    document.getElementById('taxable').value = contract.imponible;
+                    document.getElementById('tax').value = contract.impuesto;
+                    document.getElementById('total').value = contract.valorTotal;
 
-                    // Puedes mostrar los datos en el HTML, por ejemplo
-                    let corto = project.nombreCorto;
-                    document.getElementById("projectnombrec").value = corto;
-                    let largo = project.nombreLargo;
-                    document.getElementById("projectnombrel").value = largo;
-                    let plazo = project.plazoProyecto;
-                    document.getElementById("projectplazo").value = plazo;
-                    let monto = project.montoProyecto;
-                    document.getElementById("projectvalor").value = monto;
                 })
                 .catch(error => {
                     console.error("Error:", error);
                 });
-        document.getElementById("modalbtn").click();
+        const actionbtn = document.getElementById('form-btn');
+        actionbtn.value = "edit";
+        document.getElementById("modal").click();
     }
-    function deleteproject(company, id) {
+    function editcontract() {
+        const contractid = document.getElementById('contractid').value;
+        const projectname = document.getElementById('projectname').value;
+        const dataToSend = datatosend();
+        //dataToSend.id = contractid;
+        fetch('contract?action=update&id=' + contractid, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend)
+        }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: '¡Éxito!',
+                            text: 'Se actualizó la cuenta correctamente.',
+                            icon: 'info',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            window.location.href = 'contract?action=load&project=' + projectname;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                            icon: 'error',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            window.location.href = 'contract?action=load&project=' + projectname;
+                        });
+                    }
+                })
+                .catch(error => console.error(error));
+        //cleanform();
+    }
+    function totalsum() {
+        let exonerated = parseFloat(document.getElementById('exonerated').value) || 0;
+        let taxable = parseFloat(document.getElementById('taxable').value) || 0;
+        let tax = parseFloat(document.getElementById('tax').value) || 0;
+        let total = exonerated + taxable + tax;
+        document.getElementById('total').value = total;
+    }
+    function datatosend() {
+        //---------------------------------------------------
+        const container = document.getElementById('container-payment');
+        const items = container.querySelectorAll('div[id^="item"]');
+        const pay = [];
+        items.forEach(item => {
+            const inputs = item.querySelectorAll('.item');
+            let detail = {};
+            inputs.forEach(input => {
+                detail[input.name] = input.value;
+            });
+            pay.push(detail);
+        });
+        //---------------------------------------------------
+
+        const data = {
+            project: document.getElementById('projectid').value,
+            client: document.getElementById('clientid').value,
+            typecontract: document.getElementById('contracttype').value,
+            currency: document.getElementById('contractcurrency').value,
+            description: document.getElementById('contractdescription').value,
+            term: document.getElementById('contractterm').value,
+            payment: document.querySelector('input[name="paymenttype"]:checked').value,
+            paydetail: pay, // <-- Aquí mandas el arreglo tal cual, no como string
+            exonerated: document.getElementById('exonerated').value,
+            taxable: document.getElementById('taxable').value,
+            tax: document.getElementById('tax').value,
+            total: document.getElementById('total').value
+        };
+
+        return data;
+    }
+    function deletecontract(id) {
+
+        let project = document.getElementById("projectname").value;
+
         Swal.fire({
-            title: '¿Estás seguro de eliminar esta cuenta?',
+            title: '¿Estás seguro de eliminar este contrato?',
             text: "Esta acción no se puede deshacer",
             icon: 'question',
             showCancelButton: true,
@@ -186,41 +292,184 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire({
-                    title: '¡Éxito!',
-                    text: 'Se eliminó la cuenta correctamente.',
-                    icon: 'info',
-                    timer: 1000,
-                    showConfirmButton: false,
-//confirmButtonText: 'Ok',
-                    background: '#f0f9ff',
-                    confirmButtonColor: '#3085d6'
-                }).then(() => {
-                    window.location.href = 'project?action=delete&company=' + company + '&id=' + id;
-                });
-// Aquí puedes continuar con la lógica de "Yes"
+                fetch('contract?action=delete&id=' + id)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: '¡Éxito!',
+                                    text: 'Se eliminó el contrato correctamente.',
+                                    icon: 'info',
+                                    timer: 2500,
+                                    showConfirmButton: false,
+                                    //confirmButtonText: 'Ok',
+                                    background: '#f0f9ff',
+                                    confirmButtonColor: '#3085d6'
+                                }).then(() => {
+                                    window.location.href = 'contract?action=load&project=' + project;
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: '¡Error!',
+                                    text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                                    icon: 'error',
+                                    timer: 2500,
+                                    showConfirmButton: false,
+                                    //confirmButtonText: 'Ok',
+                                    background: '#f0f9ff',
+                                    confirmButtonColor: '#3085d6'
+                                });
+                            }
+                        })
+                        .catch(error => console.error(error));
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 Swal.fire(
                         'Cancelado',
                         'La acción fue cancelada :)',
                         'error'
                         );
-// Aquí puedes manejar la lógica de "No"
             }
         });
     }
-    function loadtype(id, type) {
+    function addpaymentdetail() {
+        contador++;
+        let html = "";
+        let type = document.querySelector('input[name="paymenttype"]:checked')?.value || '';
+        const add = document.getElementById('pay-num-item');
+        if (type === '') {
+            Swal.fire({
+                title: '¡Atención!',
+                text: 'Debe seleccionar una forma de pago',
+                icon: 'info',
+                showConfirmButton: true,
+                confirmButtonText: 'Ok',
+                background: '#f0f9ff',
+                confirmButtonColor: '#3085d6'
+            });
+        }
+        if (type === 'VALORIZACIONES') {
+            html = `<div id="pay-item` + contador + `" class="form-floating mb-1">        
+                        <div class="d-flex">
+                            <div style="width: 10%;" class="form-floating mb-2">
+                                <input type="text" name="item" class="form-control item" value="` + contador + `" disabled>
+                                <label for="floatingInput">Item</label>
+                            </div>
+                            <div style="width: 30%;" class="form-floating mb-2">
+                                <select name="header"  class="form-select item" aria-label="Floating label select example" required>
+                                    <option></option>
+                                    <option value="Adelanto">Adelanto</option>
+                                    <option value="Val. semanal">Val. semanal</option>
+                                    <option value="Val. mensual">Val. mensual</option>
+                                    <option value="F. garantia">F. garantia</option>
+                                    <option value="Liquidacion">Liquidacion</option>
+                                </select>
+                                <label for="floatingSelect">Tipo</label>
+                            </div>
+                            <div style="width: 45%;" class="form-floating mb-2">
+                                <input type="text" name="description" class="form-control item" placeholder="Descripcion" required>
+                                <label for="floatingInput">Descripcion</label>            
+                            </div>
+                            <div style="width: 15%;" class="form-floating mb-2">
+                                <input type="number" name="amount" class="form-control item" placeholder="Valor" step="0.01" required>
+                                <label for="floatingInput">Valor</label>            
+                            </div>
+                        </div>
+                    </div>`;
+            document.getElementById("container-payment").insertAdjacentHTML("beforeend", html);
+            add.value = contador;
+        } else if (type === 'CRONOGRAMA') {
+            html = `<div id="pay-item` + contador + `" class="form-floating mb-1">
+                        <div class="d-flex">
+                            <div style="width: 10%;" class="form-floating mb-2">
+                                <input type="text" name="item" class="form-control item" value="` + contador + `" disabled>
+                                <label for="floatingInput">Item</label>
+                            </div>
+                            <div style="width: 30%;" class="form-floating mb-2">
+                                <input type="text" name="header" class="form-control datepicker item" placeholder="Fecha" required>
+                                <label for="floatingInput">Fecha</label>
+                            </div>
+                            <div style="width: 45%;" class="form-floating mb-2">
+                                <input type="text" name="description" class="form-control item" placeholder="Descripcion" required>
+                                <label for="floatingInput">Descripcion</label>
+                            </div>
+                            <div style="width: 15%;" class="form-floating mb-2">
+                                <input type="number" name="amount" class="form-control item" placeholder="Valor" step="0.01" required>
+                                <label for="floatingInput">Valor</label>
+                            </div>
+                        </div>
+                    </div>`;
+            document.getElementById("container-payment").insertAdjacentHTML("beforeend", html);
+            flatpickr(".datepicker", {
+                dateFormat: "d/m/Y",
+                altInput: true,
+                altFormat: "F j, Y",
+                allowInput: true,
+                locale: "es" // ? idioma español
+            });
+            add.value = contador;
+        }
+    }
+    function droppaymentdetail() {
+
+        try {
+            const ref = document.getElementById("pay-num-item");
+            let idx = ref.value;
+            const drop = document.getElementById("pay-item" + idx);
+            drop.remove();
+            idx--;
+            if (idx === 0) {
+                ref.value = "";
+                contador = 0;
+            } else {
+                ref.value = idx;
+                contador = idx;
+            }
+        } catch (error) {
+            console.error("Ocurrio un error: " + error);
+        }
+    }
+    function cleanform() {
+        const frm = document.getElementById('contractform');
+        frm.reset();
+        //document.getElementById('clientid').value = '';
+        //document.getElementById('clientswitch').checked = false;
+        //document.querySelector('input[name="paymenttype"]').checked = false;
+        document.getElementById('createcli').innerHTML = '';
+        document.getElementById('container-payment').innerHTML = '';
+        document.getElementById("clientname").disabled = false;
+        const fields = frm.querySelectorAll('input, select, textarea');
+        fields.forEach(field => {
+            field.classList.remove('is-valid', 'is-invalid');
+        });
+    }
+    function paymentclean() {
+        contador = 0;
+        document.getElementById('container-payment').innerHTML = '';
+    }
+    function deleteitem(item) {
+        contador--;
+        document.getElementById(item).remove();
+    }
+    function showdetails(obj) {
+
+        const arr = JSON.parse(obj);
+        let sum1 = 0;
+        let html = '<table style="float: left;"><tbody class="align-middle">';
+        for (let i = 0; i < arr.length; i++) {
+            html += `<tr><td><strong>Pago N° ` + arr[i].numitem + `: </strong></td><td>` + arr[i].description + `</td><td> = </td><td>` + arr[i].amount + `</td></tr>`;
+            let sum2 = parseFloat(arr[i].amount);
+            sum1 = sum1 + sum2;
+        }
+        html += `<tr><td colspan="2"></td><td><strong>Total </strong></td><td><strong>` + sum1 + `</strong></td></tr></tbody></table>`;
         Swal.fire({
-            title: '¡Éxito!',
-            text: 'Seleccionaste el tipo: ' + type,
+            title: 'Detalle de Pago',
+            html: html,
             icon: 'info',
-            timer: 1000,
-            showConfirmButton: false,
-//confirmButtonText: 'Ok',
+            width: 'auto',
+            showConfirmButton: true,
+            confirmButtonText: 'Cerrar',
             background: '#f0f9ff',
             confirmButtonColor: '#3085d6'
-        }).then(() => {
-            window.location.href = 'contract?action=load&type=' + id;
         });
     }
 </script>

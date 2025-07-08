@@ -280,7 +280,7 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch('account?action=delete&id=' + id, )
+                fetch('account?action=delete&id=' + id)
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {

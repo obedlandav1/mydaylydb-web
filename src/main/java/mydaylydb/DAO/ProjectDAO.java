@@ -11,8 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import mydaylydb.entities.ProjectEntity;
 import mydaylydb.interfaces.ProjectInterface;
-import mydaylydb.utils.Database;
-import mydaylydb.utils.ResultSetToJson;
+import mydaylydb.utils.DatabaseConn;
+import mydaylydb.utils.RStoJSON;
 import org.json.JSONArray;
 
 public class ProjectDAO implements ProjectInterface {
@@ -24,7 +24,7 @@ public class ProjectDAO implements ProjectInterface {
     @Override
     public boolean Create(ProjectEntity projectEntity) {
         boolean flg = false;
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareStatement(PROJECT_CREATE);
             ps.setInt(1, Integer.parseInt(projectEntity.getRazonsocial_id()));
@@ -46,17 +46,18 @@ public class ProjectDAO implements ProjectInterface {
                 Logger.getLogger(ProjectDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return flg;    }
+        return flg;
+    }
 
     @Override
     public JSONArray ReadById(int id) {
         JSONArray JSONString = null;
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareStatement(READ_BY_ID);
             ps.setInt(1, id);
             rs = ps.executeQuery();
-            JSONString = ResultSetToJson.convert(rs);
+            JSONString = RStoJSON.convertRStoJson(rs);
         } catch (SQLException e) {
             Logger.getLogger(ProjectDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
@@ -68,12 +69,13 @@ public class ProjectDAO implements ProjectInterface {
                 Logger.getLogger(ProjectDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return JSONString;    }
+        return JSONString;
+    }
 
     @Override
     public boolean Update(ProjectEntity projectEntity) {
         boolean flg = false;
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareStatement(PROJECT_UPDATE);
             ps.setInt(1, projectEntity.getId());
@@ -94,13 +96,13 @@ public class ProjectDAO implements ProjectInterface {
                 Logger.getLogger(ProjectDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return flg;    
+        return flg;
     }
 
     @Override
     public boolean Delete(int Id) {
         boolean flg = false;
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareStatement(DELETE_BY_ID);
             ps.setInt(1, Id);
@@ -117,12 +119,40 @@ public class ProjectDAO implements ProjectInterface {
                 Logger.getLogger(ProjectDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return flg;    }
-    
+        return flg;
+    }
+
+    @Override
+    public ProjectEntity SelectProjectByName(String name) {
+        ProjectEntity projectEntity = new ProjectEntity();
+        Connection con = DatabaseConn.getConexion();
+        try {
+            ps = con.prepareStatement(PROJECT_SELECT_ALL_BY_NAME);
+            ps.setString(1, name);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                projectEntity.setId(rs.getInt(1));
+                projectEntity.setNombrecorto(rs.getString(2));
+                projectEntity.setNombrelargo(rs.getString(3));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(ProjectDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ProjectDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return projectEntity;
+    }
+
     @Override
     public List<ProjectEntity> SelectAllProjectsByCompany(int company) {
         List<ProjectEntity> list = new ArrayList<>();
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareStatement(PROJECT_SELECT_ALL_BY_COMPANY);
             ps.setInt(1, company);

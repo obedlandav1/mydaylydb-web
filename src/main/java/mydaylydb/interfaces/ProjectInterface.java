@@ -14,6 +14,8 @@ public interface ProjectInterface {
 
     public abstract boolean Delete(int Id);
 
+    public abstract ProjectEntity SelectProjectByName(String name);
+
     public abstract List<ProjectEntity> SelectAllProjectsByCompany(int company);
 
     String PROJECT_CREATE = "CALL PROJECT_CREATE(?,?,?,?,?,?);";
@@ -23,6 +25,8 @@ public interface ProjectInterface {
     String PROJECT_UPDATE = "CALL PROJECT_UPDATE_BY_ID (?,?,?,?,?)";
 
     String DELETE_BY_ID = "CALL PROJECT_DELETE_BY_ID(?)";
+
+    String PROJECT_SELECT_ALL_BY_NAME = "CALL PROJECT_SELECT_PROJECT_BY_NAME(?)";
 
     String PROJECT_SELECT_ALL_BY_COMPANY = "CALL PROJECT_SELECT_ALL_BY_COMPANY(?)";
 }

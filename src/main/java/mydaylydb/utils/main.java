@@ -5,15 +5,20 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
+
 public class main {
 
     public static void conection(String[] args) {
 
-        Database.getConexion();
+        DatabaseConn.getConexion();
 
     }
-    
-        public static byte[] getSHA(String input) throws NoSuchAlgorithmException {
+
+    public static byte[] getSHA(String input) throws NoSuchAlgorithmException {
         // Static getInstance method is called with hashing SHA
         MessageDigest md = MessageDigest.getInstance("SHA-256");
 
@@ -54,10 +59,26 @@ public class main {
 
             String s4 = "OBED";
             System.out.println("\n" + s1 + " : " + toHexString(getSHA(s4)));
-            
+
         } // For specifying wrong message digest algorithms
         catch (NoSuchAlgorithmException e) {
             System.out.println("Exception thrown for incorrect algorithm: " + e);
         }
+    }
+
+    public static void main(String[] args) {
+        // Crear un JsonObjectBuilder
+        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
+
+        // Agregar pares clave-valor al JsonObjectBuilder
+        jsonBuilder.add("nombre", "Juan");
+        jsonBuilder.add("apellido", "Parez");
+        jsonBuilder.add("edad", 30);
+
+        // Construir el JsonObject
+        JsonObject jsonObject = jsonBuilder.build();
+
+        // Imprimir el JsonObject como una cadena
+        System.out.println(jsonObject.toString());
     }
 }

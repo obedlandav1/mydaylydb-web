@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import mydaylydb.entities.UserEntity;
 import mydaylydb.interfaces.LoginInterface;
 import mydaylydb.utils.CreateSHA256;
-import mydaylydb.utils.Database;
+import mydaylydb.utils.DatabaseConn;
 
 public class LoginDAO implements LoginInterface {
 
@@ -23,7 +23,7 @@ public class LoginDAO implements LoginInterface {
     public String SelectPassword(String User) {
 
         String password = "";
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareStatement(SELECT_PASSWORD);
             ps.setString(1, User);
@@ -57,7 +57,7 @@ public class LoginDAO implements LoginInterface {
     @Override
     public UserEntity SelectUser(String User) {
         UserEntity userEntity = new UserEntity();
-        Connection con = Database.getConexion();
+        Connection con = DatabaseConn.getConexion();
         try {
             ps = con.prepareStatement(SELECT_USER);
             ps.setString(1, User);
