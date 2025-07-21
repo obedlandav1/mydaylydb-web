@@ -1,6 +1,6 @@
 <header class="sticky-top">
     <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
-        <div class="navbar bg-body-tertiary">
+        <div class="navbar bg-body-tertiary p-0">
             <a class="navbar-brand" href="#">
                 <img 
                     style="height: 30px; width: 30px;"
@@ -13,15 +13,15 @@
             </c:if>  
         </div>   
     </nav>
-    <nav class="navbar navbar-expand-lg" style="background-color: rgb(13,110,253);" data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg" style="background-color: rgb(130,110,253);" data-bs-theme="dark">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="fw-bold navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+                        <a class="nav-link" href="home?action=load">Inicio</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="project?action=load">Proyectos</a>

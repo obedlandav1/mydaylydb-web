@@ -37,13 +37,13 @@ public class ContractDAO implements ContractInterface {
             ps.setInt(4, Integer.parseInt(contractEntity.getTipomoneda()));
             ps.setString(5, contractEntity.getDescripcioncontrato());
             ps.setInt(6, contractEntity.getPlazocontrato());
-            ps.setString(7, contractEntity.getFormapago());
+            ps. setString(7, contractEntity.getFormapago());
             ps.setString(8, contractEntity.getDetallepago());
             ps.setDouble(9, contractEntity.getExonerado());
             ps.setDouble(10, contractEntity.getImponible());
             ps.setDouble(11, contractEntity.getImpuesto());
             ps.setDouble(12, contractEntity.getValortotal());
-            ps.setDouble(13, contractEntity.getEstado());
+            ps.setInt(13, contractEntity.getEstado());
             ps.executeUpdate();
             flg = true;
         } catch (SQLException e) {
@@ -143,11 +143,11 @@ public class ContractDAO implements ContractInterface {
     }
 
     @Override
-    public List<ContractEntity> SelectAllContractsByCompany(int companyid) {
+    public List<ContractEntity> SelectAllContractsByProject(int companyid) {
         List<ContractEntity> list = new ArrayList<>();
         Connection con = DatabaseConn.getConexion();
         try {
-            ps = con.prepareStatement(CONTRACT_SELECT_ALL_BY_COMPANY);
+            ps = con.prepareStatement(CONTRACT_SELECT_ALL_BY_PROJECT);
             ps.setInt(1, companyid);
             rs = ps.executeQuery();
             if (rs != null) {

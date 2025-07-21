@@ -3,15 +3,18 @@ package mydaylydb.entities;
 public class OrderEntity {
 
     private int id;
-    private String proyectos;
-    private String proveedores;
+    private String proyecto;
+    private String proveedor;
+    private String fechaorden;
     private String tipoorden;
-    private String tipomoneda;
-    private String descripcioncontrato;
+    private String descripcionorden;
     private int plazoorden;
+    private String tipomoneda;
     private String formapago;
+    private String presupuesto;
     private String detallepago;
-    private String consideraciones;
+    private String consgenrales;
+    private String consespecificas;
     private double subtotal1;
     private double tipocambio;
     private double subtotal2;
@@ -19,6 +22,7 @@ public class OrderEntity {
     private double imponible;
     private double impuesto;
     private double valortotal;
+    private String letras;
     private int estado;
 
     public int getId() {
@@ -29,20 +33,28 @@ public class OrderEntity {
         this.id = id;
     }
 
-    public String getProyectos() {
-        return proyectos;
+    public String getProyecto() {
+        return proyecto;
     }
 
-    public void setProyectos(String proyectos) {
-        this.proyectos = proyectos;
+    public void setProyecto(String proyecto) {
+        this.proyecto = proyecto;
     }
 
-    public String getProveedores() {
-        return proveedores;
+    public String getProveedor() {
+        return proveedor;
     }
 
-    public void setProveedores(String proveedores) {
-        this.proveedores = proveedores;
+    public void setProveedor(String proveedor) {
+        this.proveedor = proveedor;
+    }
+
+    public String getFechaorden() {
+        return fechaorden;
+    }
+
+    public void setFechaorden(String fechaorden) {
+        this.fechaorden = fechaorden;
     }
 
     public String getTipoorden() {
@@ -53,20 +65,12 @@ public class OrderEntity {
         this.tipoorden = tipoorden;
     }
 
-    public String getTipomoneda() {
-        return tipomoneda;
+    public String getDescripcionorden() {
+        return descripcionorden;
     }
 
-    public void setTipomoneda(String tipomoneda) {
-        this.tipomoneda = tipomoneda;
-    }
-
-    public String getDescripcioncontrato() {
-        return descripcioncontrato;
-    }
-
-    public void setDescripcioncontrato(String descripcioncontrato) {
-        this.descripcioncontrato = descripcioncontrato;
+    public void setDescripcionorden(String descripcionorden) {
+        this.descripcionorden = descripcionorden;
     }
 
     public int getPlazoorden() {
@@ -77,12 +81,28 @@ public class OrderEntity {
         this.plazoorden = plazoorden;
     }
 
+    public String getTipomoneda() {
+        return tipomoneda;
+    }
+
+    public void setTipomoneda(String tipomoneda) {
+        this.tipomoneda = tipomoneda;
+    }
+
     public String getFormapago() {
         return formapago;
     }
 
     public void setFormapago(String formapago) {
         this.formapago = formapago;
+    }
+
+    public String getPresupuesto() {
+        return presupuesto;
+    }
+
+    public void setPresupuesto(String presupuesto) {
+        this.presupuesto = presupuesto;
     }
 
     public String getDetallepago() {
@@ -93,12 +113,20 @@ public class OrderEntity {
         this.detallepago = detallepago;
     }
 
-    public String getConsideraciones() {
-        return consideraciones;
+    public String getConsgenrales() {
+        return consgenrales;
     }
 
-    public void setConsideraciones(String consideraciones) {
-        this.consideraciones = consideraciones;
+    public void setConsgenrales(String consgenrales) {
+        this.consgenrales = consgenrales;
+    }
+
+    public String getConsespecificas() {
+        return consespecificas;
+    }
+
+    public void setConsespecificas(String consespecificas) {
+        this.consespecificas = consespecificas;
     }
 
     public double getSubtotal1() {
@@ -157,35 +185,19 @@ public class OrderEntity {
         this.valortotal = valortotal;
     }
 
+    public String getLetras() {
+        return letras;
+    }
+
+    public void setLetras(String letras) {
+        this.letras = letras;
+    }
+
     public int getEstado() {
         return estado;
     }
 
     public void setEstado(int estado) {
-        this.estado = estado;
-    }
-
-    public OrderEntity() {
-    }
-
-    public OrderEntity(int id, String proyectos, String proveedores, String tipoorden, String tipomoneda, String descripcioncontrato, int plazoorden, String formapago, String detallepago, String consideraciones, double subtotal1, double tipocambio, double subtotal2, double exonerado, double imponible, double impuesto, double valortotal, int estado) {
-        this.id = id;
-        this.proyectos = proyectos;
-        this.proveedores = proveedores;
-        this.tipoorden = tipoorden;
-        this.tipomoneda = tipomoneda;
-        this.descripcioncontrato = descripcioncontrato;
-        this.plazoorden = plazoorden;
-        this.formapago = formapago;
-        this.detallepago = detallepago;
-        this.consideraciones = consideraciones;
-        this.subtotal1 = subtotal1;
-        this.tipocambio = tipocambio;
-        this.subtotal2 = subtotal2;
-        this.exonerado = exonerado;
-        this.imponible = imponible;
-        this.impuesto = impuesto;
-        this.valortotal = valortotal;
         this.estado = estado;
     }
 

@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Ubuntu:400);
+@import url(https://fonts.googleapis.com/css?family=Ubuntu:300);
 
 /**
 *{
@@ -15,7 +15,6 @@
     width: 16px;
     height: 16px;
 }
-
 header{
     /**height: 5vh;*/
     height: 100%;
@@ -29,26 +28,28 @@ header{
     color:#dfe6e9;
     */
 }
-
 body {
     font-family: "Ubuntu", sans-serif;
 }
-
 section{
     height: 100%;
     width: 100%;
-    padding-top: 15px;
-    padding-bottom: 15px;
 }
-
 hr{
     border-color: #b3b3b3;
     opacity: 0.75;
-    height: 1px;
+    padding: 0;
 }
-
 #logo {
     height: 50px;
     width: 50px;
 }
-
+.target {
+    zoom: 70%;
+}
+.query-controls{
+    width: 20vw;
+}
+.flatpickr-calendar {
+    font-size: 12px; /* Reduce el calendario */
+}

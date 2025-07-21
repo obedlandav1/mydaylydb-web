@@ -8,71 +8,99 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <%@include file="WEB-INF/jspf/main.jspf" %>
-        <style>
-
-        </style>
     </head>
     <body>
-        <%@include file="WEB-INF/jspf/header_contract.jspf" %>
-        <!-- Body content-->
-        <section class="col-lg-10 offset-lg-1">
-            <div class="container-fluid">
-                <div class="d-flex">
-                    <div>
-                        <img style="height: 50px; width: 50px;" id="logo" src="RESOURCES/img/img-orders-512.png" alt="mydaylydb/project"/>
-                    </div>
-                    &nbsp;
-                    <div><h1><strong>Proyectos/Ordenes</strong></h1></div>
+        <section class="target">
+            <%@include file="WEB-INF/jspf/header_contract.jspf" %>
+            <!-- Body content-->
+            <div class="col-lg-10 offset-lg-1 mt-2">
+                <div class="container-fluid">
+                    <div class="d-flex">
+                        <div>
+                            <img style="height: 45px; width: 45px;" id="logo" src="RESOURCES/img/img-orders-512.png" alt="mydaylydb/project"/>
+                        </div>
+                        &nbsp;
+                        <div><h1>Proyectos/Ordenes</h1></div>
+                    </div> 
                 </div> 
-            </div> 
-            <div class="container-fluid">
-                <hr>
-                <input type="hidden" id="companyid" name="companyid" value="${companyses.id}">
-                <input type="hidden" id="projectid" name="projectid" value="${projectses.id}">  
-                <input type="hidden" id="projectname" name="projectname" value="${projectses.nombrecorto}">
-                <input type="hidden" id="orderid" name="orderid"> 
-                <div class="d-flex justify-content-between">
-                    <div><h1 style="font-size: 35px;" class="data">Registro:</h1></div>
-                    <div><button style="width: 200px;" onclick="newcontract()" type="button" class="btn btn-primary">Crear orden</button></div>
-                </div> 
-                <table style="max-height: 300px; overflow-y: auto;" class="table table-responsive caption-top" id="tbl-contract">
-                    <thead class="table-light">
-                        <tr>
-                            <th scope="col">N°</th>
-                            <th scope="col">Cliente</th>
-                            <th scope="col">Tipo</th>
-                            <th scope="col">Descripcion</th>
-                            <th scope="col">Plazo</th>
-                            <th scope="col">Moneda</th>
-                            <th scope="col">Tipo pago</th>
-                            <th scope="col">Detalle pago</th>
-                            <th scope="col">Consideraciones</th>
-                            <!--<th scope="col">T. EXONERADO</th>-->
-                            <th scope="col">Total sin IGV</th>
-                            <!--<th scope="col">IMPUESTO</th>-->
-                            <th scope="col">Total con IGV</th>
-                            <th style="width: 150px;" scope="col">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:if test="${showcontracts}">
-                            <% int j = 1;%>
-                            <c:forEach var="c" items="${contracts}">
-                                <tr>
-
-                                </tr>
-                            </c:forEach>
-                        </c:if>
-                    </tbody>
-                </table>
-                <c:if test="${!showcontracts}">
-                    <div class="alert alert-secondary">
-                        No existen registros.
-                    </div>
-                </c:if>  
-            </div>
-            <!--Button Trigger New Contract-->
-            <button id="modal" class="btn btn-primary invisible" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
+                <div class="container-fluid">
+                    <hr>
+                    <input type="hidden" id="companyid" name="companyid" value="${companyses.id}">
+                    <input type="hidden" id="projectid" name="projectid" value="${projectses.id}">  
+                    <input type="hidden" id="projectname" name="projectname" value="${projectses.nombrecorto}">
+                    <input type="hidden" id="orderid" name="orderid"> 
+                    <div class="d-flex justify-content-between">
+                        <div><h1 style="font-size: 35px;" class="data"><strong>Registro:</strong></h1></div>
+                        <div><button style="width: 200px;" onclick="neworder()" type="button" class="btn btn-primary">Crear orden</button></div>
+                    </div> 
+                    <table style="max-height: 300px; overflow-y: auto;" class="table table-sm fs-6 table-responsive caption-top table-striped" id="tbl-order">
+                        <thead class="table-active text-center align-middle">                        
+                            <tr>
+                                <th scope="col">N°</th>
+                                <th scope="col">Cliente</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Descripcion</th>
+                                <th scope="col">Plazo orden</th>
+                                <th scope="col">Plazo restante</th>
+                                <th scope="col">Adjudicado S/</th>
+                                <th scope="col">Pagado S/</th>
+                                <th scope="col">Por pagar S/</th>
+                                <th scope="col">Avance económico %</th>
+                                <th scope="col">Avance físico %</th>
+                                <th style="width: 350px;" scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:if test="${showorders}">
+                                <% int j = 1;%>
+                                <c:forEach var="o" items="${orders}">
+                                    <tr>
+                                        <th scope="row"><%=j++%></th>
+                                        <td>${o.proveedor}</td>
+                                        <td>${o.tipoorden}</td>
+                                        <td>${o.descripcionorden}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>${o.valortotal}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>                                       
+                                            <button style="width: 50px;" onclick="showpdf(${o.id})" type="button" class="btn btn-danger">
+                                                <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/pdf.svg" width="16" height="16" Title="Ver PDF" data-bs-toggle="tooltip"> 
+                                            </button>
+                                            <button style="width: 50px;" onclick="downloadpdf(${o.id})" type="button" class="btn btn-success">
+                                                <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/download.svg" width="16" height="16" Title="Descargar PDF" data-bs-toggle="tooltip"> 
+                                            </button>
+                                            <button style="width: 50px;" onclick="performancereport(${o.id})" type="button" class="btn btn-success">
+                                                <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/report.svg" width="16" height="16" Title="Informe avance" data-bs-toggle="tooltip"> 
+                                            </button>
+                                            <button style="width: 50px;" onclick="settlementreport(${o.id})" type="button" class="btn btn-success">
+                                                <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/finish.svg" width="16" height="16" Title="Generar Liquidacion" data-bs-toggle="tooltip"> 
+                                            </button>
+                                            <button style="width: 50px;" onclick="loadorder(${o.id})" type="button" class="btn btn-warning">
+                                                <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/pencil.svg" width="16" height="16" Title="Editar" data-bs-toggle="tooltip"> 
+                                            </button>
+                                            <button style="width: 50px;" onclick="deleteorder(${o.id})" type="button" class="btn btn-danger">
+                                                <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/trash.svg" width="16" height="16" Title="Eliminar" data-bs-toggle="tooltip"> 
+                                            </button>                                            
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:if>
+                        </tbody>
+                    </table>
+                    <c:if test="${!showorders}">
+                        <div class="alert alert-secondary">
+                            No existen registros.
+                        </div>
+                    </c:if>  
+                </div>
+                <!--Button Trigger New Contract-->
+                <button id="modal" class="btn btn-primary invisible" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
+        </section>
+        <section class="target">
             <!--New Contract Modal-->
             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
@@ -113,7 +141,7 @@
                                         <div class="col-md-2 mt-3">
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" role="switch" name="providerswitch" id="providerswitch">
-                                                <label class="form-check-label" for="clientswitch">+Nuevo</label>
+                                                <label class="form-check-label" for="providerswitch">+Nuevo</label>
                                             </div>                                        
                                         </div>
                                     </div>
@@ -137,7 +165,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-floating mb-2">
-                                                <input type="text" id="orderdate" name="orderdate" class="form-control datepicker item" placeholder="Fecha" required>
+                                                <input type="date" id="orderdate" name="orderdate" class="form-control datepicker item" placeholder="Fecha">
                                                 <label for="floatingSelect">Fecha emision de orden</label>
                                                 <div class="invalid-feedback">Este campo es obligatorio.</div>
                                             </div>
@@ -174,9 +202,9 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-floating mb-2">
-                                                <select class="form-select" id="contractcurrency" name="contractcurrency" aria-label="Floating label select example">
+                                                <select class="form-select" id="order-currency" name="order-currency" aria-label="Floating label select example">
                                                     <option></option>
-                                                    <c:forEach var="cc" items="${contractcurrency}">
+                                                    <c:forEach var="cc" items="${ordercurrency}">
                                                         <option value="${cc.id}">${cc.nombrelargo}</option>    
                                                     </c:forEach>
                                                 </select>
@@ -186,7 +214,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-floating mb-2">
-                                                <input type="number" id="exchangerate" name="exchangerate" class="form-control" step="0.01">
+                                                <input type="number" id="exchangerate" name="exchangerate" class="form-control" step="0.01" disabled>
                                                 <label for="floatingInput">Ingrese tipo de cambio</label>
                                                 <div class="invalid-feedback">Este campo es obligatorio.</div>
                                             </div>
@@ -195,15 +223,14 @@
                                 </div>
                                 <hr> 
                                 <div id="budget-row" class="row">
-                                    <input type="hidden" id="budget-items" class="budget-items" value="">
                                     <div class="d-flex">
                                         <button id="btn-collapse" 
                                                 class="btn btn-info mt-2" 
                                                 type="button" 
                                                 data-bs-toggle="collapse" 
-                                                data-bs-target="#budgetbody" 
+                                                data-bs-target="#budget-body" 
                                                 aria-expanded="true" 
-                                                aria-controls="budgetbody">▼
+                                                aria-controls="budget-body">▼
                                         </button>
                                         <div class="m-2">
                                             <strong>Detalle de partidas</strong>
@@ -211,17 +238,17 @@
                                         <div class="m-2">
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" role="switch" name="billable" id="billable">
-                                                <label class="form-check-label" for="taxable">Con factura</label>
+                                                <label class="form-check-label" for="billable">Con factura</label>
                                             </div>    
                                         </div>
                                         <div class="ms-auto m-2">
                                             <input type="file" id="input-excel" accept=".xlsx, .xls" />
                                         </div>    
                                     </div>
-                                    <div id="budgetbody" class="row collapse show">
+                                    <div id="budget-body" class="row collapse show">
                                         <div class="col-md-6">
                                             <div class="form-floating mb-2">
-                                                <input type="text" id="budgettittle" name="budgettittle" class="form-control">
+                                                <input type="text" id="budget-tittle" name="budget-tittle" class="form-control">
                                                 <label for="floatingInput">Ingrese titulo general del presupuesto</label>
                                                 <div class="invalid-feedback">Este campo es obligatorio.</div>
                                             </div>
@@ -236,6 +263,7 @@
                                                 <button type="button" onclick="dropbudgetitem()" class="btn btn-danger" Title="Eliminar partida" data-bs-toggle="tooltip">-</button>
                                             </div>
                                         </div>
+                                        <input type="hidden" id="bud-num-item" class="bud-num-item" value="">
                                         <div id="order-details">
                                         </div>
                                     </div>    
@@ -326,11 +354,13 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-floating mb-2">
-                                            <strong>Detalle valor de orden</strong>
+                                            <strong>Detalle valor order</strong>
                                         </div>
+                                        <input type="hidden" id="subtotal1">
+                                        <input type="hidden" id="subtotal2">                                        
                                         <div class="form-floating mb-2">
                                             <input type="text" class="form-control" id="exonerated" name="exonerated" disabled>
-                                            <label for="floatingInput">Exonorado</label>
+                                            <label for="floatingInput">Exonerado</label>
                                             <div class="invalid-feedback">Este campo es obligatorio.</div>
                                         </div>
                                         <div class="form-floating mb-2">
@@ -347,6 +377,12 @@
                                             <input type="text" class="form-control" id="total" name="total" disabled>
                                             <label for="floatingInput">Total</label>
                                             <div class="invalid-feedback">Este campo es obligatorio.</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div style="width: 100%;" class="form-floating mb-2">
+                                            <input type="text" id="numletters" name="numletters" class="form-control" disabled>
+                                            <label for="floatingInput">Son:</label>            
                                         </div>
                                     </div>
                                 </div>  

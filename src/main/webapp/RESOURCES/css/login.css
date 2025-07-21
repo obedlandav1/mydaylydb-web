@@ -15,12 +15,10 @@ html {
     left: 50%;
     transform: translate(-50%, -50%);
 }
-
 .login-page {
     width: 360px;
     margin: auto;
 }
-
 .logo {
     margin-bottom: 10%;
 }
@@ -106,4 +104,7 @@ html {
 }
 .container .info span .fa {
     color: #EF3B3A;
+}
+.target {
+    zoom: 70%;
 }

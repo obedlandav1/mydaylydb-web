@@ -16,6 +16,8 @@ public interface AccountInterface {
 
     public abstract List<AccountEntity> SelectAllAccountsByCompany(int company);
 
+    public abstract List<AccountEntity> SelectAllAccountsDetailsByCompany(int company);
+
     String CREATE_ACCOUNT = "CALL ACCOUNT_CREATE(?,?,?,?,?,?,?);";
 
     String READ_BY_ID = "CALL ACCOUNT_READ_BY_ID(?)";
@@ -25,7 +27,7 @@ public interface AccountInterface {
     String DELETE_BY_ID = "CALL ACCOUNT_DELETE_BY_ID(?)";
 
     String SELECT_ALL_ACCOUNTS_BY_COMPANY = "CALL ACCOUNT_SELECT_ALL_BY_COMPANY(?)";
-    
+           
     //public abstract List<AccountEntity> SelectTipoCuenta();
 
     //public abstract List<AccountEntity> SelectTipoMoneda();

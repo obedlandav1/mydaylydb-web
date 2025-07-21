@@ -14,9 +14,9 @@ public interface ContractInterface {
 
     public abstract boolean Delete(int Id);
 
-    public abstract List<ContractEntity> SelectAllContractsByCompany(int projectid);
+    public abstract List<ContractEntity> SelectAllContractsByProject(int projectid);
     
-    String CONTRACT_CREATE = "CALL CONTRACT_CREATE(?,?,?,?,?,?,?,?,?,?,?,?);";
+    String CONTRACT_CREATE = "CALL CONTRACT_CREATE(?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
     String READ_BY_ID = "CALL CONTRACT_READ_BY_ID(?)";
 
@@ -24,5 +24,5 @@ public interface ContractInterface {
 
     String DELETE_BY_ID = "CALL CONTRACT_DELETE_BY_ID(?)";
 
-    String CONTRACT_SELECT_ALL_BY_COMPANY = "CALL CONTRACT_SELECT_ALL_BY_PROJECT(?)";
+    String CONTRACT_SELECT_ALL_BY_PROJECT = "CALL CONTRACT_SELECT_ALL_BY_PROJECT(?)";
 }

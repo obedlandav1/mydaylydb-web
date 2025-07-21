@@ -1,10 +1,5 @@
 <script>
     let contador = 0;
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('exonerated').addEventListener('input', totalsum);
-        document.getElementById('taxable').addEventListener('input', totalsum);
-        document.getElementById('tax').addEventListener('input', totalsum);
-    });
     document.getElementById('contractform').addEventListener('submit', function (event) {
         event.preventDefault(); // Evita que el formulario se envíe
         event.stopPropagation();
@@ -42,7 +37,7 @@
             totdet = totdet + valor;
         });
         console.log("Sum detalle: " + totdet);
-        console.log("Sum total" + totgen);
+        console.log("Sum total: " + totgen);
 
         if (totdet !== totgen) {
             Swal.fire({
@@ -75,6 +70,17 @@
             }
         }
     });
+    document.getElementById('container-payment').addEventListener('input', function (e) {
+        let o = e.target.closest('div');
+        let id = o?.id;
+
+        let input = e.target;
+        let div = input.closest('div');
+
+        console.log(div);
+    });
+
+
     function newcontract() {
 
         contador = 0;
@@ -85,45 +91,49 @@
         document.getElementById("modal").click();
     }
     function createcontract() {
-        const projectname = document.getElementById('projectname').value;
-        const dataToSend = datatosend();
-        fetch('contract?action=create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dataToSend)
-        }).then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire({
-                            title: '¡Éxito!',
-                            text: 'Se creó el contrato correctamente.',
-                            icon: 'info',
-                            timer: 2500,
-                            showConfirmButton: false,
-                            //confirmButtonText: 'Ok',
-                            background: '#f0f9ff',
-                            confirmButtonColor: '#3085d6'
-                        }).then(() => {
-                            window.location.href = 'contract?action=load&project=' + projectname;
-                        });
-                    } else {
-                        Swal.fire({
-                            title: '¡Error!',
-                            text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
-                            icon: 'error',
-                            //timer: 2500,
-                            showConfirmButton: false,
-                            //confirmButtonText: 'Ok',
-                            background: '#f0f9ff',
-                            confirmButtonColor: '#3085d6'
-                        }).then(() => {
-                            window.location.href = 'contract?action=load&project=' + projectname;
-                        });
-                    }
-                })
-                .catch(error => console.error(error));
+        try {
+            const projectname = document.getElementById('projectname').value;
+            const dataToSend = datatosend();
+            fetch('contract?action=create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToSend)
+            }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: '¡Éxito!',
+                                text: 'Se creó el contrato correctamente.',
+                                icon: 'info',
+                                timer: 2500,
+                                showConfirmButton: false,
+                                //confirmButtonText: 'Ok',
+                                background: '#f0f9ff',
+                                confirmButtonColor: '#3085d6'
+                            }).then(() => {
+                                window.location.href = 'contract?action=load&project=' + projectname;
+                            });
+                        } else {
+                            Swal.fire({
+                                title: '¡Error!',
+                                text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                                icon: 'error',
+                                //timer: 2500,
+                                showConfirmButton: false,
+                                //confirmButtonText: 'Ok',
+                                background: '#f0f9ff',
+                                confirmButtonColor: '#3085d6'
+                            }).then(() => {
+                                window.location.href = 'contract?action=load&project=' + projectname;
+                            });
+                        }
+                    });
+            //.catch(error => console.error(error));
+        } catch (error) {
+            console.error("An error occurred:", error.message);
+        }
     }
     function loadcontract(id) {
 
@@ -154,28 +164,76 @@
                         radio.checked = true;
                     }
                     const detail = JSON.parse(contract.detallepagoContrato);
+                    console.log(detail);
                     const container = document.getElementById("container-payment");
                     detail.forEach(field => {
                         console.log(field);
-                        console.log("Contador!" + contador);
+                        contador++;
                         if (paytype === 'VALORIZACIONES') {
-                            contador++;
-                            container.insertAdjacentHTML("beforeend", paymentdetail(paytype));
-                            const payitem = container.querySelector('#item' + contador);
+                            let html = `<div id="pay-item` + contador + `" class="form-floating mb-1">        
+                                        <div class="d-flex">
+                                            <div style="width: 10%;" class="form-floating mb-2">
+                                                <input type="text" name="numitem" class="form-control item" value="` + contador + `" disabled>
+                                                <label for="floatingInput">Item</label>
+                                            </div>
+                                            <div style="width: 30%;" class="form-floating mb-2">
+                                                <select name="header"  class="form-select item" aria-label="Floating label select example" required>
+                                                    <option></option>
+                                                    <option value="Adelanto">Adelanto</option>
+                                                    <option value="Val. semanal">Val. semanal</option>
+                                                    <option value="Val. mensual">Val. mensual</option>
+                                                    <option value="F. garantia">F. garantia</option>
+                                                    <option value="Liquidacion">Liquidacion</option>
+                                                </select>
+                                                <label for="floatingSelect">Tipo</label>
+                                            </div>
+                                            <div style="width: 45%;" class="form-floating mb-2">
+                                                <input type="text" name="description" class="form-control item" placeholder="Descripcion" required>
+                                                <label for="floatingInput">Descripcion</label>            
+                                            </div>
+                                            <div style="width: 15%;" class="form-floating mb-2">
+                                                <input type="number" name="amount" class="form-control item" placeholder="Valor" step="0.01" required>
+                                                <label for="floatingInput">Valor</label>            
+                                            </div>
+                                        </div>
+                                    </div>`;
+                            container.insertAdjacentHTML("beforeend", html);
+                            const payitem = container.querySelector('#pay-item' + contador);
+                            payitem.querySelector('input[name="numitem"]').value = field.numitem;
                             payitem.querySelector('select[name="header"]').value = field.header;
                             payitem.querySelector('input[name="description"]').value = field.description;
                             payitem.querySelector('input[name="amount"]').value = field.amount;
                         } else if (paytype === 'CRONOGRAMA') {
-                            contador++;
-                            container.insertAdjacentHTML("beforeend", paymentdetail(paytype));
+                            let html = `<div id="pay-item` + contador + `" class="form-floating mb-1">
+                                        <div class="d-flex">
+                                            <div style="width: 10%;" class="form-floating mb-2">
+                                                <input type="text" name="numitem" class="form-control item" value="` + contador + `" disabled>
+                                                <label for="floatingInput">Item</label>
+                                            </div>
+                                            <div style="width: 30%;" class="form-floating mb-2">
+                                                <input type="text" name="header" class="form-control datepicker item" placeholder="Fecha" required>
+                                                <label for="floatingInput">Fecha</label>
+                                            </div>
+                                            <div style="width: 45%;" class="form-floating mb-2">
+                                                <input type="text" name="description" class="form-control item" placeholder="Descripcion" required>
+                                                <label for="floatingInput">Descripcion</label>
+                                            </div>
+                                            <div style="width: 15%;" class="form-floating mb-2">
+                                                <input type="number" name="amount" class="form-control item" placeholder="Valor" step="0.01" required>
+                                                <label for="floatingInput">Valor</label>
+                                            </div>
+                                        </div>
+                                    </div>`;
+                            container.insertAdjacentHTML("beforeend", addpaymentdetail());
                             flatpickr(".datepicker", {
-                                dateFormat: "d/m/Y",
-                                altInput: true,
-                                altFormat: "F j, Y",
+                                dateFormat: "Y-m-d",
+                                //altInput: true,
+                                //altFormat: "F j, Y",
                                 allowInput: true,
                                 locale: "es" // ? idioma español
                             });
-                            const payitem = container.querySelector('#item' + contador);
+                            const payitem = container.querySelector('#pay-item' + contador);
+                            payitem.querySelector('input[name="numitem"]').value = field.numitem;
                             payitem.querySelector('select[name="header"]').value = field.header;
                             payitem.querySelector('input[name="description"]').value = field.description;
                             payitem.querySelector('input[name="amount"]').value = field.amount;
@@ -239,17 +297,10 @@
                 .catch(error => console.error(error));
         //cleanform();
     }
-    function totalsum() {
-        let exonerated = parseFloat(document.getElementById('exonerated').value) || 0;
-        let taxable = parseFloat(document.getElementById('taxable').value) || 0;
-        let tax = parseFloat(document.getElementById('tax').value) || 0;
-        let total = exonerated + taxable + tax;
-        document.getElementById('total').value = total;
-    }
     function datatosend() {
-        //---------------------------------------------------
+        //----------------------------------------------------
         const container = document.getElementById('container-payment');
-        const items = container.querySelectorAll('div[id^="item"]');
+        const items = container.querySelectorAll('div[id^="pay-item"]');
         const pay = [];
         items.forEach(item => {
             const inputs = item.querySelectorAll('.item');
@@ -275,7 +326,7 @@
             tax: document.getElementById('tax').value,
             total: document.getElementById('total').value
         };
-
+        console.log(data);
         return data;
     }
     function deletecontract(id) {
@@ -351,7 +402,7 @@
             html = `<div id="pay-item` + contador + `" class="form-floating mb-1">        
                         <div class="d-flex">
                             <div style="width: 10%;" class="form-floating mb-2">
-                                <input type="text" name="item" class="form-control item" value="` + contador + `" disabled>
+                                <input type="text" name="numitem" class="form-control item" value="` + contador + `" disabled>
                                 <label for="floatingInput">Item</label>
                             </div>
                             <div style="width: 30%;" class="form-floating mb-2">
@@ -381,7 +432,7 @@
             html = `<div id="pay-item` + contador + `" class="form-floating mb-1">
                         <div class="d-flex">
                             <div style="width: 10%;" class="form-floating mb-2">
-                                <input type="text" name="item" class="form-control item" value="` + contador + `" disabled>
+                                <input type="text" name="numitem" class="form-control item" value="` + contador + `" disabled>
                                 <label for="floatingInput">Item</label>
                             </div>
                             <div style="width: 30%;" class="form-floating mb-2">
@@ -400,9 +451,9 @@
                     </div>`;
             document.getElementById("container-payment").insertAdjacentHTML("beforeend", html);
             flatpickr(".datepicker", {
-                dateFormat: "d/m/Y",
-                altInput: true,
-                altFormat: "F j, Y",
+                dateFormat: "Y-m-d",
+                //altInput: true,
+                //altFormat: "F j, Y",
                 allowInput: true,
                 locale: "es" // ? idioma español
             });
@@ -445,10 +496,6 @@
     function paymentclean() {
         contador = 0;
         document.getElementById('container-payment').innerHTML = '';
-    }
-    function deleteitem(item) {
-        contador--;
-        document.getElementById(item).remove();
     }
     function showdetails(obj) {
 

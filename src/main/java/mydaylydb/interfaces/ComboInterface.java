@@ -6,15 +6,17 @@ import org.json.JSONArray;
 
 public interface ComboInterface {
 
-    public abstract List<ComboEntity> SelectAllAccountType();
+    public abstract List<ComboEntity> SelectAllAccountsType();
 
-    public abstract List<ComboEntity> SelectAllCurrencyType();
+    public abstract List<ComboEntity> SelectAllCurrenciesType();
+
+    public abstract List<ComboEntity> SelectAllContractsType();
+    
+    public abstract List<ComboEntity> SelectAllOperationsType();
+
+    public abstract List<ComboEntity> SelectAllBanksName();
 
     public abstract JSONArray SelectAllBankName();
-
-    public abstract List<ComboEntity> SelectAllContractType();
-
-    public abstract ComboEntity SelectContractTypeByName(String name);
 
     public abstract JSONArray SelectAllIdentificationType();
 
@@ -26,16 +28,18 @@ public interface ComboInterface {
 
     String SELECT_CONTRACT_TYPE = "SELECT id, nombreCorto, nombreLargo FROM tipoContrato";
 
-    String SELECT_CONTRACT_ID = "SELECT id, nombreCorto FROM tipoContrato WHERE nombreCorto=?";
-
     String SELECT_IDENTIFICATION_TYPE = "SELECT id, nombreLargo FROM tipoIdentidad";
 
     String SELECT_ORDER_TYPE = "";
 
-    String SELECT_OPERATION_TYPE = "";
+    String SELECT_OPERATION_TYPE = "SELECT id, nombreLargo FROM tipoOperacion";
 
     String SELECT_DOCUMENT_TYPE = "";
 
     String SELECT_IDENTITY_TYPE = "SELECT id, nombreCorto FROM tipoIdentidad";
+
+    //public abstract JSONArray SelectAllIdentificationType();
+    
+    //String SELECT_CONTRACT_ID = "SELECT id, nombreCorto FROM tipoContrato WHERE nombreCorto=?";
 
 }

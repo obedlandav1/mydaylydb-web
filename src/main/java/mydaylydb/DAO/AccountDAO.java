@@ -139,12 +139,12 @@ public class AccountDAO implements AccountInterface {
                 while (rs.next()) {
                     AccountEntity accountEntity = new AccountEntity();
                     accountEntity.setId(rs.getInt(1));
-                    accountEntity.setBancos_id(rs.getString(2));
-                    accountEntity.setTipocuenta_id(rs.getString(3));
-                    accountEntity.setTipomoneda_id(rs.getString(4));
-                    accountEntity.setNumerocuenta(rs.getString(5));
-                    accountEntity.setNumerointerbancario(rs.getString(6));
-                    list.add(accountEntity  );
+                    accountEntity.setBanco(rs.getString(2));
+                    accountEntity.setTipocuenta(rs.getString(4));
+                    accountEntity.setTipomoneda(rs.getString(5));
+                    accountEntity.setNumerocuenta(rs.getString(6));
+                    accountEntity.setNumerointerbancario(rs.getString(7));
+                    list.add(accountEntity);
                 }
             } else {
                 list = null;
@@ -162,4 +162,41 @@ public class AccountDAO implements AccountInterface {
         }
         return list;
     }
+
+    @Override
+    public List<AccountEntity> SelectAllAccountsDetailsByCompany(int company) {
+        List<AccountEntity> list = new ArrayList<>();
+        Connection con = DatabaseConn.getConexion();
+        try {
+            ps = con.prepareCall(SELECT_ALL_ACCOUNTS_BY_COMPANY);
+            ps.setInt(1, company);
+            rs = ps.executeQuery();
+            if (rs != null) {
+                while (rs.next()) {
+                    AccountEntity accountEntity = new AccountEntity();
+                    accountEntity.setId(rs.getInt(1));
+                    accountEntity.setBanco(rs.getString(3));
+                    accountEntity.setTipocuenta(rs.getString(4));
+                    accountEntity.setTipomoneda(rs.getString(5));
+                    accountEntity.setNumerocuenta(rs.getString(6));
+                    accountEntity.setNumerointerbancario(rs.getString(7));
+                    list.add(accountEntity);
+                }
+            } else {
+                list = null;
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return list;
+    }    
 }
+//-${a.banco}-${a.tipomoneda}

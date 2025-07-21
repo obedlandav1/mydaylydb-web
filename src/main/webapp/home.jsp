@@ -8,9 +8,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <%@include file="WEB-INF/jspf/main.jspf" %>
     </head>
-    <body>
-        <%@include file="WEB-INF/jspf/header_main.jspf" %>   
-        <section>
+    <body>  
+        <section class="target">
+            <%@include file="WEB-INF/jspf/header_main.jspf" %> 
             <div class="container-fluid">
                 <div class="row">
 

@@ -121,7 +121,4 @@ public class ContractDTO {
     public void setTotal(Double total) {
         this.total = total;
     }
-
-
-
 }

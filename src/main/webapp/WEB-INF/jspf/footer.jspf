@@ -1,6 +1,6 @@
-<footer class="bg-light text-center py-3 fixed-bottom                                                                                                                   ">
+<footer class="target bg-light text-center py-3 fixed-bottom                                                                                                                   ">
   <!-- Copyright -->
-  <div class="text-center p-3">
+  <div class="text-center p-1">
     © 2025 Copyright:
     <a class="text-body" href="#">CODE AND NETWORKS DEVELOPMENT EIRL</a>
   </div>

@@ -161,9 +161,9 @@ public class Contract extends HttpServlet {
         projectEntity = objProject.SelectProjectByName(request.getParameter("project"));
         session.setAttribute("projectses", projectEntity);
         
-        request.setAttribute("contracttypes", objCombo.SelectAllContractType());
-        request.setAttribute("contractcurrency", objCombo.SelectAllCurrencyType());
-        List<ContractEntity> listaContratos = objContract.SelectAllContractsByCompany(projectEntity.getId());
+        request.setAttribute("contracttypes", objCombo.SelectAllContractsType());
+        request.setAttribute("contractcurrency", objCombo.SelectAllCurrenciesType());
+        List<ContractEntity> listaContratos = objContract.SelectAllContractsByProject(projectEntity.getId());
         request.setAttribute("showcontracts", !listaContratos.isEmpty());
         request.setAttribute("contracts", listaContratos);
         request.getRequestDispatcher("/contract.jsp").forward(request, response);

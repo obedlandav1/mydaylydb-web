@@ -4,9 +4,13 @@ public class AccountEntity {
 
     private int id;
     private String razonsocial_id;
+    private String razonsocial;
     private String bancos_id;
+    private String banco;
     private String tipocuenta_id;
+    private String tipocuenta;
     private String tipomoneda_id;
+    private String tipomoneda;
     private String numerocuenta;
     private String numerointerbancario;
     private int estado;
@@ -27,12 +31,28 @@ public class AccountEntity {
         this.razonsocial_id = razonsocial_id;
     }
 
+    public String getRazonsocial() {
+        return razonsocial;
+    }
+
+    public void setRazonsocial(String razonsocial) {
+        this.razonsocial = razonsocial;
+    }
+
     public String getBancos_id() {
         return bancos_id;
     }
 
     public void setBancos_id(String bancos_id) {
         this.bancos_id = bancos_id;
+    }
+
+    public String getBanco() {
+        return banco;
+    }
+
+    public void setBanco(String banco) {
+        this.banco = banco;
     }
 
     public String getTipocuenta_id() {
@@ -43,12 +63,28 @@ public class AccountEntity {
         this.tipocuenta_id = tipocuenta_id;
     }
 
+    public String getTipocuenta() {
+        return tipocuenta;
+    }
+
+    public void setTipocuenta(String tipocuenta) {
+        this.tipocuenta = tipocuenta;
+    }
+
     public String getTipomoneda_id() {
         return tipomoneda_id;
     }
 
     public void setTipomoneda_id(String tipomoneda_id) {
         this.tipomoneda_id = tipomoneda_id;
+    }
+
+    public String getTipomoneda() {
+        return tipomoneda;
+    }
+
+    public void setTipomoneda(String tipomoneda) {
+        this.tipomoneda = tipomoneda;
     }
 
     public String getNumerocuenta() {

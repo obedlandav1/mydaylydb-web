@@ -9,9 +9,9 @@
         })
     });
     flatpickr(".datepicker", {
-        dateFormat: "d/m/Y",
-        altInput: true,
-        altFormat: "F j, Y",
+        dateFormat: "Y-m-d",
+        //altInput: true,
+        //altFormat: "F j, Y",
         allowInput: true,
         locale: "es" // ? idioma español
     });

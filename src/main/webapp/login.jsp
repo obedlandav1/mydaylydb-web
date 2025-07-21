@@ -9,7 +9,7 @@
         <%@include file="WEB-INF/jspf/login.jspf" %>
     </head>
     <body>
-        <div class="login-page">
+        <section class="target login-page">
             <div class="form">
                 <form method="post" id="login">
                     <img 
@@ -31,8 +31,7 @@
                     <button type="submit" class="btn btn-primary">Ingresar</button>
                 </form>
             </div>
-        </div>
-        <%@include file="WEB-INF/jspf/scripts.jspf" %>
+        </section>
         <%@include file="WEB-INF/jspf/scripts_login.jspf" %>
     </body>
 </html>

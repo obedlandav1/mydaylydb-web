@@ -5,26 +5,25 @@
     let n = 0;
     let l = 0;
 
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('exonerated').addEventListener('input', totalsum);
-        document.getElementById('taxable').addEventListener('input', totalsum);
-        document.getElementById('tax').addEventListener('input', totalsum);
-    });
     document.getElementById('orderform').addEventListener('submit', function (event) {
         event.preventDefault(); // Evita que el formulario se envíe
         event.stopPropagation();
 
-        const cli = document.getElementById('clientname');
-        const tip = document.getElementById('contracttype');
-        const mon = document.getElementById('contractcurrency');
-        const des = document.getElementById('contractdescription');
-        const pla = document.getElementById('contractterm');
+        const pro = document.getElementById('providername');
+        const fec = document.getElementById('orderdate');
+        const tip = document.getElementById('ordertype');
+        const des = document.getElementById('orderdescription');
+        const ter = document.getElementById('orderterm');
+        const mon = document.getElementById('order-currency');
+        const exc = document.getElementById('exchangerate');
         const exo = document.getElementById('exonerated');
         const bas = document.getElementById('taxable');
         const imp = document.getElementById('tax');
         const tot = document.getElementById('total');
+        const ltr = document.getElementById('numletters');
 
-        let fields = [cli, tip, mon, des, pla, exo, bas, imp, tot];
+
+        let fields = [pro, fec, tip, des, ter, mon, exc, exo, bas, imp, tot, ltr];
 
         fields.forEach(field => {
             field.classList.remove('is-valid', 'is-invalid');
@@ -46,6 +45,7 @@
             let valor = parseFloat(item.value) || 0;
             totdet = totdet + valor;
         });
+        //console.log(totdet);
 
         if (totdet !== totgen) {
             Swal.fire({
@@ -59,21 +59,24 @@
             });
         } else {
             if (
-                    cli.value.trim() !== "" &&
+                    pro.value.trim() !== "" &&
+                    fec.value.trim() !== "" &&
                     tip.value.trim() !== "" &&
-                    mon.value.trim() !== "" &&
                     des.value.trim() !== "" &&
-                    pla.value.trim() !== "" &&
+                    ter.value.trim() !== "" &&
+                    mon.value.trim() !== "" &&
+                    exc.value.trim() !== "" &&
                     exo.value.trim() !== "" &&
                     bas.value.trim() !== "" &&
                     imp.value.trim() !== "" &&
-                    tot.value.trim() !== ""
+                    tot.value.trim() !== "" &&
+                    ltr.value.trim()
                     ) {
                 let actiontype = document.getElementById('form-btn').value;
                 if (actiontype == 'create') {
-                    createcontract();
+                    createorder();
                 } else if (actiontype == 'edit') {
-                    editcontract();
+                    editorder();
                 }
             }
         }
@@ -127,7 +130,7 @@
                                     a = String(row["Item"]).trim();
                                     b = String(row["Descripcion"]).trim();
                                     c = parseFloat(row["SubTotal (sin IGV)"]) || 0;
-                                    html = `<div id="item` + a + `" class="row">
+                                    html = `<div id="budget-item` + a + `" class="row budget-item">
                                                 <input type="hidden" name="valitem" value="">    
                                                 <input type="hidden" name="numitem" value="` + a + `">  
                                                 <input type="hidden" name="subitem" value="1">      
@@ -145,25 +148,27 @@
                                                 </div>
                                                 <div class="col-md-1">
                                                     <div class="form-floating mb-2">
-                                                        <input type="text" name="itemnum` + a + `" class="budgetitem form-control" value="` + a + `" disabled>
+                                                        <input type="text" id="itemnum` + a + `" name="itemnum" class="detail budgetitem form-control" value="` + a + `" disabled>
                                                         <label for="floatingInput">Item</label>
                                                     </div> 
                                                 </div>  
                                                 <div class="col-md-7">
                                                     <div class="form-floating mb-2">
-                                                        <input type="text" name="itemdes` + a + `" class="budgettittle form-control" value="` + b + `" required>
+                                                        <input type="text" id="itemdes` + a + `" name="itemdes" class="detail budgettittle form-control" value="` + b + `" required>
                                                         <label for="floatingInput">Ingrese el titulo de la partida</label>
                                                     </div> 
                                                 </div>  
                                                 <div class="col-md-2">
                                                     <div class="form-floating mb-2">
-                                                        <input type="number" name="itemsub` + a + `" class="subtotal form-control" step="0.01" value="` + c.toFixed(2) + `" required disabled>
+                                                        <input type="number" id="itemsub` + a + `" name="itemsub" class="detail subtotal form-control" step="0.01" value="` + c.toFixed(2) + `" required disabled>
                                                         <label for="floatingInput">Parcial</label>
                                                     </div>
                                                 </div>
+                                                <div id="subitems">        
+                                                </div>
                                             </div>`;
                                     document.getElementById('order-details').insertAdjacentHTML("beforeend", html);
-                                    document.querySelector("#budget-row .budget-items").value = a;
+                                    document.querySelector("#budget-row .bud-num-item").value = a;
                                     html = "";
                                     break;
                                 case 2:
@@ -173,18 +178,19 @@
                                     d = parseFloat(row["Cantidad"]) || 0;
                                     e = parseFloat(row["Precio Unitario"]) || 0;
                                     f = parseFloat(row["SubTotal (sin IGV)"]) || 0;
+                                    const container = document.querySelector("#budget-item" + ti[0] + " [id='subitems']");
 
                                     html = `<div id="subitem` + ti[0] + `_` + ti[1] + `" class="d-flex">
                                                 <div style="width: 7%;" class="form-floating mb-2">
-                                                    <input type="text" name="subitem` + ti[0] + `_` + ti[1] + `" class="form-control" value="` + a + `" disabled>
+                                                    <input type="text" id="subitem` + ti[0] + `_` + ti[1] + `" name="subitem" class="subdetail form-control" value="` + a + `" disabled>
                                                     <label for="floatingInput">Item</label>
                                                 </div>
                                                 <div style="width: 42.1%;" class="form-floating mb-2">
-                                                    <input type="text" name="subdescription` + ti[0] + `_` + ti[1] + `" class="form-control" value="` + b + `" required>
+                                                    <input type="text" id="subdescription` + ti[0] + `_` + ti[1] + `" name="subdescription" class="subdetail form-control" value="` + b + `" required>
                                                     <label for="floatingInput">Descripcion</label>
                                                 </div>
                                                 <div style="width: 12%;" class="form-floating mb-2">
-                                                    <select name="subunit` + ti[0] + `_` + ti[1] + `" class="form-select" name="subunit" aria-label="Floating label select example" required>
+                                                    <select id="subunit` + ti[0] + `_` + ti[1] + `" name="subunit" class="subdetail form-select" aria-label="Floating label select example" required>
                                                         <option></option>
                                                         <option value="GLB">GLB</option>
                                                         <option value="BAL">BAL</option>
@@ -211,22 +217,22 @@
                                                     <label for="floatingSelect">Unid.</label>
                                                 </div>
                                                 <div style="width: 12%;" class="form-floating mb-2">
-                                                    <input type="number" name="subquantity` + ti[0] + `_` + ti[1] + `" class="form-control" step="0.01" value="` + d + `" required>
+                                                    <input type="number" id="subquantity` + ti[0] + `_` + ti[1] + `" name="subquantity" class="subdetail form-control" step="0.01" value="` + d + `" required>
                                                     <label for="floatingInput">Cant.</label>
                                                 </div>
                                                 <div style="width: 12%;" class="form-floating mb-2">
-                                                    <input type="number" name="subprice` + ti[0] + `_` + ti[1] + `" class="form-control" step="0.01" value="` + e.toFixed(2) + `" required>
+                                                    <input type="number" id="subprice` + ti[0] + `_` + ti[1] + `" name="subprice" class="subdetail form-control" step="0.01" value="` + e.toFixed(2) + `" required>
                                                     <label for="floatingInput">P. unit. sin igv</label>
                                                 </div>
                                                 <div style="width: 14.9%;" class="form-floating mb-2">
-                                                    <input type="number" name="subtotal` + ti[0] + `_` + ti[1] + `" class="form-control" step="0.01" value="` + f.toFixed(2) + `" required>
+                                                    <input type="number" id="subtotal` + ti[0] + `_` + ti[1] + `" name="subtotal" class="subdetail form-control" step="0.01" value="` + f.toFixed(2) + `" required>
                                                     <label for="floatingInput">Subtotal</label>
                                                 </div>
                                             </div>`;
-                                    document.getElementById("item" + ti[0]).insertAdjacentHTML("beforeend", html);
+                                    container.insertAdjacentHTML("beforeend", html);
                                     let p = parseInt(ti[1]) + 1;
-                                    document.querySelector("#item" + ti[0] + " [name='valitem']").value = "subitem" + ti[0] + "_" + ti[1];
-                                    document.querySelector("#item" + ti[0] + " [name='subitem']").value = p;
+                                    document.querySelector("#budget-item" + ti[0] + " [name='valitem']").value = "subitem" + ti[0] + "_" + ti[1];
+                                    document.querySelector("#budget-item" + ti[0] + " [name='subitem']").value = p;
                                     document.querySelector("#subitem" + ti[0] + "_" + ti[1] + " [name='subunit']").value = c;
                                     //const unit = document.querySelector("subunit" + ti[0] + "_" + ti[1]);
                                     //unit.value = c;
@@ -254,93 +260,64 @@
             reader.readAsArrayBuffer(file);
         }
     });
+    document.getElementById('order-currency').addEventListener('change', function (e) {
+        let currency = e.target.value;
+        const rate = document.getElementById('exchangerate');
+        if (currency === "1") {
+            rate.disabled = true;
+            rate.value = 1;
+        } else {
+            rate.disabled = false;
+            rate.value = "";
+        }
+        subtotalsum();
+    });
     document.getElementById('order-details').addEventListener('input', function (e) {
-        let o = e.target.name;
+        let o = e.target.id;
         let t = o.match(/[a-zA-Z]+/g); //texto
         let n = o.match(/\d+/g); //numero
 
         if (t[0] === 'subprice' || t[0] === 'subquantity') {
-            const st = document.querySelector('input[name="subtotal' + n[0] + '_' + n[1] + '"]');
-            const sq = document.querySelector('input[name="subquantity' + n[0] + '_' + n[1] + '"]');
-            const sp = document.querySelector('input[name="subprice' + n[0] + '_' + n[1] + '"]');
+            const st = document.getElementById('subtotal' + n[0] + '_' + n[1]);
+            const sq = document.getElementById('subquantity' + n[0] + '_' + n[1]);
+            const sp = document.getElementById('subprice' + n[0] + '_' + n[1]);
 
             let q = sq.value;
             let p = sp.value;
             let t = parseFloat(q) * parseFloat(p);
             t = isNaN(t) ? 0 : t; //isNaN si es un numero valido
             st.value = t.toFixed(2);
-
             parcialsum(n[0]);
         }
+    });
+    document.getElementById('exchangerate').addEventListener('change', function () {
+        subtotalsum();
     });
     document.getElementById('billable').addEventListener('change', function () {
         subtotalsum();
     });
-    function parcialsum(index) {
-        let sbt = 0;
-        const items = document.querySelector('#item' + index + ' input[name="subitem"]');
-        const tot = document.querySelector('#item' + index + ' input[name="itemsub' + index + '"]');
-
-        for (let cursor = 1; cursor < items.value; cursor++) {
-            const sum = document.querySelector('input[name="subtotal' + index + '_' + cursor + '"]');
-            let s = parseFloat(sum.value);
-            s = isNaN(s) ? 0 : s;
-            sbt += s;
-            tot.value = sbt.toFixed(2);
-        }
-        subtotalsum();
-    }
-    function subtotalsum() {
-        const billable = document.querySelector('input[name="billable"]');
-
-        const Items = document.getElementById("budget-items").value;
-        const Exo = document.getElementById("exonerated");
-        const Txb = document.getElementById("taxable");
-        const Tax = document.getElementById("tax");
-        const Tot = document.getElementById("total");
-
-        let sum = 0;
-        for (let f = 1; f <= Items; f++) {
-            const num = document.querySelector("#item" + f + " .subtotal");
-            let sma = parseFloat(num?.value || 0);
-            sum += sma;
-        }
-
-        if (billable.checked) {
-            const base = sum;
-            const igv = base * 0.18;
-            const total = base + igv;
-
-            Exo.value = "0.00";
-            Txb.value = base.toFixed(2);
-            Tax.value = igv.toFixed(2);
-            Tot.value = total.toFixed(2);
-        } else {
-            Exo.value = sum.toFixed(2);
-            Txb.value = "0.00";
-            Tax.value = "0.00";
-            Tot.value = sum.toFixed(2);
-        }
-    }
-
-
-    function newcontract() {
+    function neworder() {
 
         i = 0;
         j = 0;
+        m = 0;
+        n = 0;
         cleanform();
         document.getElementById('staticBackdropLabel').textContent = "Nueva orden";
+        //document.querySelector('.gen-con-num').value = 1;
+        //document.querySelector('.spc-con-num').value = 1;
         const actionbtn = document.getElementById('form-btn');
         actionbtn.value = "create";
         document.getElementById("modal").click();
     }
-    function createcontract() {
+    function createorder() {
         const projectname = document.getElementById('projectname').value;
         const dataToSend = datatosend();
-        fetch('contract?action=create', {
+
+        fetch('order?action=create', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': "application/json; charset=UTF-8"
             },
             body: JSON.stringify(dataToSend)
         }).then(response => response.json())
@@ -348,7 +325,7 @@
                     if (data.success) {
                         Swal.fire({
                             title: '¡Éxito!',
-                            text: 'Se creó el contrato correctamente.',
+                            text: 'Se creó la orden correctamente.',
                             icon: 'info',
                             timer: 2500,
                             showConfirmButton: false,
@@ -356,7 +333,7 @@
                             background: '#f0f9ff',
                             confirmButtonColor: '#3085d6'
                         }).then(() => {
-                            window.location.href = 'contract?action=load&project=' + projectname;
+                            window.location.href = 'order?action=load&project=' + projectname;
                         });
                     } else {
                         Swal.fire({
@@ -369,18 +346,18 @@
                             background: '#f0f9ff',
                             confirmButtonColor: '#3085d6'
                         }).then(() => {
-                            window.location.href = 'contract?action=load&project=' + projectname;
+                            window.location.href = 'order?action=load&project=' + projectname;
                         });
                     }
                 })
                 .catch(error => console.error(error));
     }
-    function loadcontract(id) {
+    function loadorder(id) {
 
         j = 0;
         cleanform();
-        document.getElementById("staticBackdropLabel").textContent = "Editar proyecto";
-        fetch('contract?action=read&id=' + id)
+        document.getElementById("staticBackdropLabel").textContent = "Editar orden";
+        fetch('order?action=read&id=' + id)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("Error al obtener los datos");
@@ -388,54 +365,279 @@
                     return response.json();
                 })
                 .then(data => {
-                    const contract = data[0];
+                    console.log(data);
+                    const order = data[0];
                     //document.getElementById('projectid').value = contract.id;
-                    document.getElementById('contractid').value = id;
-                    document.getElementById('clientid').value = contract.clientes_id;
-                    document.getElementById('clientname').value = contract.nombreCliente;
-                    document.getElementById('contracttype').value = contract.tipoContrato_id;
-                    document.getElementById('contractcurrency').value = contract.tipoMoneda_id;
-                    document.getElementById('contractdescription').value = contract.descripcionContrato;
-                    document.getElementById('contractterm').value = contract.plazoContrato;
+                    document.getElementById('orderid').value = id;
+                    document.getElementById('providerid').value = order.proveedores_id;
+                    document.getElementById('providername').value = order.nombreProveedor;
+                    document.getElementById('orderdate').value = order.fechaOrden;
+                    document.getElementById('ordertype').value = order.tipoOrden_id;
+                    document.getElementById('orderdescription').value = order.descripcionOrden;
+                    document.getElementById('orderterm').value = order.plazoOrden;
+                    document.getElementById('order-currency').value = order.tipoMoneda_id;
+                    document.getElementById('subtotal1').value = order.subTotal1;
+                    const exrate = document.getElementById('exchangerate');
+                    //exrate.disabled = false;
+                    exrate.value = order.tipoCambio;
+                    //exrate.disabled = true;
+                    document.getElementById('subtotal2').value = order.subTotal2;
                     //===========================================================
-                    let paytype = contract.tipopagoContrato;
+                    const detail = JSON.parse(order.detallePartidas);
+                    const itemdetails = document.getElementById('order-details');
+                    let html = '';
+
+                    document.getElementById('budget-tittle').value = detail[0].budgettittle;
+                    const swt = detail[0].budgetbillable;
+                    document.getElementById('billable').checked = swt;
+                    //document.getElementById('bud-num-item').value = detail[0].length;                  
+                    detail[0].budgetitems.forEach(e => {
+                        let y = e.itemnum;
+                        let d = e.itemdes;
+                        let s = e.itemsub;
+                        let c = e.subtitems.length;
+                        console.log(c);
+
+                        html = `<div id="budget-item` + y + `" class="row budget-item">
+                                    <input type="hidden" id="valitem" value="subitem` + y + `_` + c + `">    
+                                    <input type="hidden" id="numitem" value="` + y + `">  
+                                    <input type="hidden" id="subitem" value="` + (c + 1) + `">      
+                                    <div class="col-md-2 d-flex">
+                                        <div class="form-floating m-2">
+                                            <button style="width: 70px;" onclick="addbudgetdetail('budget-item` + y + `')" type="button" class="btn btn-warning">
+                                                <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/newdetail.svg" width="16" height="16" Title="Añadir detalle" data-bs-toggle="tooltip"> 
+                                            </button>
+                                        </div>
+                                        <div class="form-floating m-2">
+                                            <button style="width: 70px;" onclick="dropbudgetdetail('budget-item` + y + `')" type="button" class="btn btn-danger">
+                                                <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/trash.svg" width="16" height="16" Title="Eliminar detalle" data-bs-toggle="tooltip"> 
+                                            </button>
+                                        </div>  
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-floating mb-2">
+                                            <input type="text" id="itemnum` + y + `" name="itemnum" class="detail form-control" value="` + y + `" disabled>
+                                            <label for="floatingInput">Item</label>
+                                        </div> 
+                                    </div>  
+                                    <div class="col-md-7">
+                                        <div class="form-floating mb-2">
+                                            <input type="text" id="itemdes` + y + `" name="itemdes" class="detail form-control" value="` + d + `" required>
+                                            <label for="floatingInput">Ingrese el titulo de la partida</label>
+                                        </div> 
+                                    </div>  
+                                    <div class="col-md-2">
+                                        <div class="form-floating mb-2">
+                                            <input type="number" id="itemsub` + y + `" name="itemsub" class="detail form-control" step="0.01" value="` + s + `" disabled required>
+                                            <label for="floatingInput">Parcial</label>
+                                        </div>
+                                    </div>
+                                    <div id="subitems">        
+                                    </div>                       
+                                </div>`;
+                        itemdetails.insertAdjacentHTML("beforeend", html);
+                        const subitems = document.querySelector('#budget-item' + y + ' div[id^="subitems"]');
+                        e.subtitems.forEach(h => {
+                            let subi = h.subitem;
+                            const index = subi.split(".");
+                            let desc = h.subdescription;
+                            let unit = h.subunit;
+                            let quan = h.subquantity;
+                            let pric = h.subprice;
+                            let stot = h.subtotal;
+                            html = `<div id="subitem` + index[0] + `_` + index[1] + `" class="d-flex">
+                                        <div style="width: 7%;" class="form-floating mb-2">
+                                            <input type="text" id="subitem` + index[0] + `_` + index[1] + `" name="subitem" class="subdetail form-control" value="` + index[0] + `.` + index[1] + `" disabled>
+                                            <label for="floatingInput">Item</label>
+                                        </div>
+                                        <div style="width: 42.1%;" class="form-floating mb-2">
+                                            <input type="text" id="subdescription` + index[0] + `_` + index[1] + `" name="subdescription" class="subdetail form-control" value="` + desc + `" required>
+                                            <label for="floatingInput">Descripcion</label>
+                                        </div>
+                                        <div style="width: 12%;" class="form-floating mb-2">
+                                            <select id="subunit` + index[0] + `_` + index[1] + `" name="subunit" class="subdetail form-select" aria-label="Floating label select example" required>
+                                                <option></option>
+                                                <option value="GLB">GLB</option>
+                                                <option value="BAL">BAL</option>
+                                                <option value="BOT">BOT</option>
+                                                <option value="CJA">CJA</option>
+                                                <option value="CM">CM</option>
+                                                <option value="MT">MT</option>
+                                                <option value="CM2">CM2</option>
+                                                <option value="MT2">MT2</option>
+                                                <option value="CM3">CM3</option>
+                                                <option value="MT3">MT3</option>
+                                                <option value="MMT">MMT</option>
+                                                <option value="MM2">MM2</option>
+                                                <option value="MM3">MM3</option>
+                                                <option value="GR">GR</option>
+                                                <option value="KG">KG</option>
+                                                <option value="TON">TON</option>
+                                                <option value="MLL">MLL</option>
+                                                <option value="PAQ">PAQ</option>
+                                                <option value="PAL">PAL</option>
+                                                <option value="UNID">UNID</option>
+                                                <option value="DOC">DOC</option>
+                                            </select>
+                                            <label for="floatingSelect">Unid.</label>
+                                        </div>
+                                        <div style="width: 12%;" class="form-floating mb-2">
+                                            <input type="number" id="subquantity` + index[0] + `_` + index[1] + `" name="subquantity" class="subdetail form-control" step="0.01" value="` + quan + `" required>
+                                            <label for="floatingInput">Cant.</label>
+                                        </div>
+                                        <div style="width: 12%;" class="form-floating mb-2">
+                                            <input type="number" id="subprice` + index[0] + `_` + index[1] + `" name="subprice" class="subdetail form-control" step="0.01" value="` + pric + `" required>
+                                            <label for="floatingInput">P. unit. sin igv</label>
+                                        </div>
+                                        <div style="width: 14.9%;" class="form-floating mb-2">
+                                            <input type="number" id="subtotal` + index[0] + `_` + index[1] + `" name="subtotal" class="subdetail form-control" step="0.01" value="` + stot + `" required>
+                                            <label for="floatingInput">Subtotal</label>
+                                        </div>
+                                    </div>`;
+                            subitems.insertAdjacentHTML("beforeend", html);
+                            document.getElementById(`subunit` + index[0] + `_` + index[1]).value = unit;
+                        });
+                    });
+                    //===========================================================
+                    const paytype = order.formapagoOrden;
                     const radio = document.querySelector(`input[name="paymenttype"][value="` + paytype + `"]`);
-                    if (radio)
+                    if (radio) {
                         radio.checked = true;
-                    const detail = JSON.parse(contract.formapagoContrato);
+                    }
                     const container = document.getElementById("container-payment");
-                    detail.forEach(field => {
-                        console.log(field);
-                        console.log("Contador!" + j);
+                    const paydetail = JSON.parse(order.detallepagoOrden);
+                    paydetail.forEach(field => {
                         if (paytype === 'VALORIZACIONES') {
                             j++;
-                            container.insertAdjacentHTML("beforeend", addpaymentitem(paytype));
-                            const payitem = container.querySelector('#item' + j);
+                            html = `<div id="pay-item` + j + `" class="form-floating mb-1">        
+                                        <div class="d-flex">
+                                            <div style="width: 10%;" class="form-floating mb-2">
+                                                <input type="text" name="numitem" class="form-control item" value="` + j + `" disabled>
+                                                <label for="floatingInput">Item</label>
+                                            </div>
+                                            <div style="width: 30%;" class="form-floating mb-2">
+                                                <select name="header" class="form-select item" aria-label="Floating label select example" required>
+                                                    <option></option>
+                                                    <option value="Adelanto">Adelanto</option>
+                                                        <option value="Val. semanal">Val. semanal</option>
+                                                    <option value="Val. mensual">Val. mensual</option>
+                                                    <option value="F. garantia">F. garantia</option>
+                                                    <option value="Liquidacion">Liquidacion</option>
+                                                </select>
+                                                <label for="floatingSelect">Tipo</label>
+                                            </div>
+                                            <div style="width: 45%;" class="form-floating mb-2">
+                                                <input type="text" name="description" class="form-control item" placeholder="Descripcion" required>
+                                                <label for="floatingInput">Descripcion</label>            
+                                            </div>
+                                            <div style="width: 15%;" class="form-floating mb-2">
+                                                <input type="number" name="amount" class="form-control item" placeholder="Valor" step="0.01" required>
+                                                <label for="floatingInput">Valor</label>            
+                                            </div>
+                                        </div>
+                                    </div>`;
+                            container.insertAdjacentHTML("beforeend", html);
+                            const payitem = container.querySelector('#pay-item' + j);
                             payitem.querySelector('select[name="header"]').value = field.header;
                             payitem.querySelector('input[name="description"]').value = field.description;
                             payitem.querySelector('input[name="amount"]').value = field.amount;
                         } else if (paytype === 'HITOS') {
                             j++;
-                            container.insertAdjacentHTML("beforeend", addpaymentitem(paytype));
+                            html = `<div id="pay-item` + j + `" class="form-floating mb-1">
+                                        <div class="d-flex">
+                                            <div style="width: 10%;" class="form-floating mb-2">
+                                                <input type="text" name="numitem" class="form-control item" value="` + j + `" disabled>
+                                                <label for="floatingInput">Item</label>
+                                            </div>
+                                            <div style="width: 30%;" class="form-floating mb-2">
+                                                <input type="text" name="header" class="form-control datepicker item" placeholder="Fecha" required>
+                                                <label for="floatingInput">Fecha</label>
+                                            </div>
+                                            <div style="width: 45%;" class="form-floating mb-2">
+                                                <input type="text" name="description" class="form-control item" placeholder="Descripcion" required>
+                                                <label for="floatingInput">Descripcion</label>
+                                            </div>
+                                            <div style="width: 15%;" class="form-floating mb-2">
+                                                <input type="number" name="amount" class="form-control item" placeholder="Valor" step="0.01" required>
+                                                <label for="floatingInput">Valor</label>
+                                            </div>
+                                        </div>
+                                    </div>`;
+                            container.insertAdjacentHTML("beforeend", html);
                             flatpickr(".datepicker", {
-                                dateFormat: "d/m/Y",
-                                altInput: true,
-                                altFormat: "F j, Y",
+                                dateFormat: "Y-m-d",
+                                //altInput: true,
+                                //altFormat: "F j, Y",
                                 allowInput: true,
                                 locale: "es" // ? idioma español
                             });
-                            const payitem = container.querySelector('#item' + j);
+                            const payitem = container.querySelector('#pay-item' + j);
                             payitem.querySelector('select[name="header"]').value = field.header;
                             payitem.querySelector('input[name="description"]').value = field.description;
                             payitem.querySelector('input[name="amount"]').value = field.amount;
                         }
                     });
                     //===========================================================
-                    document.getElementById('exonerated').value = contract.exonerado;
-                    document.getElementById('taxable').value = contract.imponible;
-                    document.getElementById('tax').value = contract.impuesto;
-                    document.getElementById('total').value = contract.valorTotal;
-
+                    const consgeneral = document.getElementById('general-considerations');
+                    const generaldetail = JSON.parse(order.detallegeneralOrden);
+                    generaldetail.forEach(gen => {
+                        html = `<div id="gen-con` + gen.numitem + `" class="d-flex">
+                                    <div style="width: 10%;" class="form-floating mb-2">
+                                        <input type="text" name="numitem" class="form-control item" value="` + gen.numitem + `" disabled>
+                                        <label for="floatingInput">Item</label>
+                                    </div>
+                                    <div style="width: 90%;" class="form-floating mb-2">
+                                        <input type="text" name="description" class="item form-control" value="` + gen.description + `"" required>
+                                        <label for="floatingInput">Descripcion</label>
+                                    </div>
+                                </div>`;
+                        consgeneral.insertAdjacentHTML("beforeend", html);
+                        m = gen.numitem;
+                        console.log("Contador m: " + m);
+                        document.querySelector(".gen-con-num").value = m;
+                        console.log("Valor: " + document.querySelector(".gen-con-num").value);
+                    });
+                    //===========================================================
+                    const consspecific = document.getElementById('specific-considerations');
+                    const specificdetail = JSON.parse(order.detalleespecifOrden);
+                    specificdetail.forEach(spc => {
+                        html = `<div id="spc-con` + spc.numitem + `" class="d-flex">
+                                <div style="width: 10%;" class="form-floating mb-2">
+                                    <input type="text" name="numitem" class="form-control item" value="` + spc.numitem + `" disabled>
+                                    <label for="floatingInput">Item</label>
+                                </div>
+                                <div style="width: 90%;" class="form-floating mb-2">
+                                    <input type="text" name="description" class="item form-control" value="` + spc.description + `" required>
+                                    <label for="floatingInput">Descripcion</label>
+                                </div>
+                            </div>`;
+                        consspecific.insertAdjacentHTML("beforeend", html);
+                        n = spc.numitem;
+                        console.log("Contador n: " + n);
+                        document.querySelector(".spc-con-num").value = n;
+                        console.log("Valor: " + document.querySelector(".spc-con-num").value);
+                    });
+                    //===========================================================
+                    const exo = document.getElementById('exonerated');
+                    //exo.disabled = false;
+                    exo.value = order.exonerado;
+                    //exo.disabled = true;
+                    const txb = document.getElementById('taxable');
+                    //txb.disabled = false;
+                    txb.value = order.imponible;
+                    //txb.disabled = true;
+                    const tx = document.getElementById('tax');
+                    //tx.disabled = false;
+                    tx.value = order.impuesto;
+                    //tx.disabled = true;
+                    const ttl = document.getElementById('total');
+                    //ttl.disabled = false;
+                    ttl.value = order.valorTotal;
+                    //ttl.disabled = true;
+                    const lts = document.getElementById('numletters');
+                    //lts.disabled = false;
+                    lts.value = order.valorLetras;
+                    //lts.disable = true;
                 })
                 .catch(error => {
                     console.error("Error:", error);
@@ -444,15 +646,15 @@
         actionbtn.value = "edit";
         document.getElementById("modal").click();
     }
-    function editcontract() {
-        const contractid = document.getElementById('contractid').value;
+    function editorder() {
+        const orderid = document.getElementById('orderid').value;
         const projectname = document.getElementById('projectname').value;
         const dataToSend = datatosend();
-        //dataToSend.id = contractid;
-        fetch('contract?action=update&id=' + contractid, {
+        //dataToSend.id = orderid;
+        fetch('order?action=update&id=' + orderid, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': "application/json; charset=UTF-8"
             },
             body: JSON.stringify(dataToSend)
         }).then(response => response.json())
@@ -460,7 +662,7 @@
                     if (data.success) {
                         Swal.fire({
                             title: '¡Éxito!',
-                            text: 'Se actualizó la cuenta correctamente.',
+                            text: 'Se actualizó la orden correctamente.',
                             icon: 'info',
                             timer: 2500,
                             showConfirmButton: false,
@@ -468,7 +670,7 @@
                             background: '#f0f9ff',
                             confirmButtonColor: '#3085d6'
                         }).then(() => {
-                            window.location.href = 'contract?action=load&project=' + projectname;
+                            window.location.href = 'order?action=load&project=' + projectname
                         });
                     } else {
                         Swal.fire({
@@ -481,50 +683,116 @@
                             background: '#f0f9ff',
                             confirmButtonColor: '#3085d6'
                         }).then(() => {
-                            window.location.href = 'contract?action=load&project=' + projectname;
+                            window.location.href = 'order?action=load&project=' + projectname
                         });
                     }
                 })
                 .catch(error => console.error(error));
         //cleanform();
     }
-    function totalsum() {
-        let exonerated = parseFloat(document.getElementById('exonerated').value) || 0;
-        let taxable = parseFloat(document.getElementById('taxable').value) || 0;
-        let tax = parseFloat(document.getElementById('tax').value) || 0;
-        let total = exonerated + taxable + tax;
-        document.getElementById('total').value = total;
-    }
     function datatosend() {
+
+        let items = "";
+        let container = "";
+        let details = {};
         //---------------------------------------------------
-        const container = document.getElementById('container-payment');
-        const items = container.querySelectorAll('div[id^="item"]');
-        const pay = [];
+        let budgetdata = [];
+        const swt = document.getElementById('billable');
+        const bill = swt.checked;
+        const tittle = document.getElementById('budget-tittle').value;
+        container = document.getElementById('order-details');
+
+        let budgetdetail = {};
+        budgetdetail['budgettittle'] = tittle;
+        budgetdetail['budgetbillable'] = bill;
+        let detail = [];
+        items = container.querySelectorAll('div[id^="budget-item"]');
+        let numitems = items.length;
+
+        for (let x = 0; x < numitems; x++) {
+            const row = items[x].querySelectorAll('.detail');
+            let data = {};
+            row.forEach(e => {
+                data[e.name] = e.value;
+            });
+
+            const col = items[x].querySelectorAll('#subitems div[id^="subitem"]');
+            let subitems = col.length;
+            let subitem = [];
+            for (let j = 0; j < subitems; j++) {
+                const itmdetails = col[j].querySelectorAll('.subdetail');
+                let subdata = {};
+                itmdetails.forEach(s => {
+                    subdata[s.name] = s.value;
+                });
+                subitem.push(subdata);
+            }
+            data['subtitems'] = subitem;
+
+            detail.push(data);
+        }
+        budgetdetail['budgetitems'] = detail;
+        console.log(budgetdetail);
+        budgetdata.push(budgetdetail);
+        //---------------------------------------------------
+        container = document.getElementById('container-payment');
+        items = container.querySelectorAll('div[id^="pay-item"]');
+        let paymentdata = [];
         items.forEach(item => {
             const inputs = item.querySelectorAll('.item');
-            let detail = {};
+            details = {};
             inputs.forEach(input => {
-                detail[input.name] = input.value;
+                details[input.name] = input.value;
             });
-            pay.push(detail);
+            paymentdata.push(details);
         });
         //---------------------------------------------------
-
+        container = document.getElementById('general-considerations');
+        items = container.querySelectorAll('div[id^="gen-con"]');
+        let generaldata = [];
+        items.forEach(item => {
+            const inputs = item.querySelectorAll('.item');
+            details = {};
+            inputs.forEach(input => {
+                details[input.name] = input.value;
+            });
+            generaldata.push(details);
+        });
+        //---------------------------------------------------
+        container = document.getElementById('specific-considerations');
+        items = container.querySelectorAll('div[id^="spc-con"]');
+        let specificdata = [];
+        items.forEach(item => {
+            const inputs = item.querySelectorAll('.item');
+            details = {};
+            inputs.forEach(input => {
+                details[input.name] = input.value;
+            });
+            specificdata.push(details);
+        });
+        //---------------------------------------------------
         const data = {
             project: document.getElementById('projectid').value,
-            client: document.getElementById('clientid').value,
-            typecontract: document.getElementById('contracttype').value,
-            currency: document.getElementById('contractcurrency').value,
-            description: document.getElementById('contractdescription').value,
-            term: document.getElementById('contractterm').value,
+            provider: document.getElementById('providerid').value,
+            dateorder: document.getElementById('orderdate').value,
+            typeorder: document.getElementById('ordertype').value,
+            description: document.getElementById('orderdescription').value,
+            term: document.getElementById('orderterm').value,
+            currency: document.getElementById('order-currency').value,
             payment: document.querySelector('input[name="paymenttype"]:checked').value,
-            paydetail: pay, // <-- Aquí mandas el arreglo tal cual, no como string
+            budgetbody: budgetdata,
+            paymentdetail: paymentdata,
+            genconsider: generaldata,
+            speconsider: specificdata,
+            subtotal1: document.getElementById('subtotal1').value,
+            exchange: document.getElementById('exchangerate').value,
+            subtotal2: document.getElementById('subtotal2').value,
             exonerated: document.getElementById('exonerated').value,
             taxable: document.getElementById('taxable').value,
             tax: document.getElementById('tax').value,
-            total: document.getElementById('total').value
+            total: document.getElementById('total').value,
+            letters: document.getElementById('numletters').value
         };
-
         return data;
     }
     function deletecontract(id) {
@@ -583,65 +851,68 @@
     function addbudgetitem() {
         i++;
         let html = '';
-        html = `<div id="item` + i + `" class="row">
-                    <input type="hidden" name="valitem" value="">    
-                    <input type="hidden" name="numitem" value="` + i + `">  
-                    <input type="hidden" name="subitem" value="1">      
+        html = `<div id="budget-item` + i + `" class="row budget-item">
+                    <input type="hidden" id="valitem" value="">    
+                    <input type="hidden" id="numitem" value="` + i + `">  
+                    <input type="hidden" id="subitem" value="1">      
                     <div class="col-md-2 d-flex">
                         <div class="form-floating m-2">
-                            <button style="width: 70px;" onclick="addbudgetdetail('item` + i + `')" type="button" class="btn btn-warning">
+                            <button style="width: 70px;" onclick="addbudgetdetail('budget-item` + i + `')" type="button" class="btn btn-warning">
                                 <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/newdetail.svg" width="16" height="16" Title="Añadir detalle" data-bs-toggle="tooltip"> 
                             </button>
                         </div>
                         <div class="form-floating m-2">
-                            <button style="width: 70px;" onclick="dropbudgetdetail('item` + i + `')" type="button" class="btn btn-danger">
+                            <button style="width: 70px;" onclick="dropbudgetdetail('budget-item` + i + `')" type="button" class="btn btn-danger">
                                 <img style="filter: brightness(0) invert(1);" src="RESOURCES/svg/trash.svg" width="16" height="16" Title="Eliminar detalle" data-bs-toggle="tooltip"> 
                             </button>
                         </div>  
                     </div>
                     <div class="col-md-1">
                         <div class="form-floating mb-2">
-                            <input type="text" name="itemnum` + i + `" class="budgetitem form-control" value="` + i + `" disabled>
+                            <input type="text" id="itemnum` + i + `" name="itemnum" class="detail form-control" value="` + i + `" disabled>
                             <label for="floatingInput">Item</label>
                         </div> 
                     </div>  
                     <div class="col-md-7">
                         <div class="form-floating mb-2">
-                            <input type="text" name="itemdes` + i + `" class="budgettittle form-control" required>
+                            <input type="text" id="itemdes` + i + `" name="itemdes" class="detail form-control" required>
                             <label for="floatingInput">Ingrese el titulo de la partida</label>
                         </div> 
                     </div>  
                     <div class="col-md-2">
                         <div class="form-floating mb-2">
-                            <input type="number" name="itemsub` + i + `" class="subtotal form-control" step="0.01" disabled required>
+                            <input type="number" id="itemsub` + i + `" name="itemsub" class="detail form-control" step="0.01" disabled required>
                             <label for="floatingInput">Parcial</label>
                         </div>
                     </div>
+                    <div id="subitems">        
+                    </div>                       
                 </div>`;
 
         document.getElementById("order-details").insertAdjacentHTML("beforeend", html);
-        document.getElementById("budget-items").value = i;
+        document.getElementById("bud-num-item").value = i;
     }
     function addbudgetdetail(itemid) {
 
         try {
-            const item = document.querySelector("#" + itemid + " [name='valitem']");
-            const num = document.querySelector("#" + itemid + " [name='numitem']");
-            const sub = document.querySelector("#" + itemid + " [name='subitem']");
+            const container = document.querySelector("#" + itemid + " [id='subitems']");
+            const item = document.querySelector("#" + itemid + " [id='valitem']");
+            const num = document.querySelector("#" + itemid + " [id='numitem']");
+            const sub = document.querySelector("#" + itemid + " [id='subitem']");
             let html = '';
             let y = parseInt(num.value);
             let x = parseInt(sub.value);
             html = `<div id="subitem` + y + `_` + x + `" class="d-flex">
                         <div style="width: 7%;" class="form-floating mb-2">
-                            <input type="text" name="subitem` + y + `_` + x + `" class="form-control" value="` + y + `.` + x + `" disabled>
+                            <input type="text" id="subitem` + y + `_` + x + `" name="subitem" class="subdetail form-control" value="` + y + `.` + x + `" disabled>
                             <label for="floatingInput">Item</label>
                         </div>
                         <div style="width: 42.1%;" class="form-floating mb-2">
-                            <input type="text" name="subdescription` + y + `_` + x + `" class="form-control" required>
+                            <input type="text" id="subdescription` + y + `_` + x + `" name="subdescription" class="subdetail form-control" required>
                             <label for="floatingInput">Descripcion</label>
                         </div>
                         <div style="width: 12%;" class="form-floating mb-2">
-                            <select class="form-select" name="subunit` + y + `_` + x + `" aria-label="Floating label select example" required>
+                            <select id="subunit` + y + `_` + x + `" name="subunit" class="subdetail form-select" aria-label="Floating label select example" required>
                                 <option></option>
                                 <option value="GLB">GLB</option>
                                 <option value="BAL">BAL</option>
@@ -668,20 +939,20 @@
                             <label for="floatingSelect">Unid.</label>
                         </div>
                         <div style="width: 12%;" class="form-floating mb-2">
-                            <input type="number" name="subquantity` + y + `_` + x + `" class="form-control" step="0.01" required>
+                            <input type="number" id="subquantity` + y + `_` + x + `" name="subquantity" class="subdetail form-control" step="0.01" required>
                             <label for="floatingInput">Cant.</label>
                         </div>
                         <div style="width: 12%;" class="form-floating mb-2">
-                            <input type="number" name="subprice` + y + `_` + x + `" class="form-control" step="0.01" required>
+                            <input type="number" id="subprice` + y + `_` + x + `" name="subprice" class="subdetail form-control" step="0.01" required>
                             <label for="floatingInput">P. unit. sin igv</label>
                         </div>
                         <div style="width: 14.9%;" class="form-floating mb-2">
-                            <input type="number" name="subtotal` + y + `_` + x + `" class="form-control" step="0.01" required>
+                            <input type="number" id="subtotal` + y + `_` + x + `" name="subtotal" class="subdetail form-control" step="0.01" required>
                             <label for="floatingInput">Subtotal</label>
                         </div>
                     </div>`;
 
-            document.getElementById(itemid).insertAdjacentHTML("beforeend", html);
+            container.insertAdjacentHTML("beforeend", html);
             item.value = "subitem" + y + "_" + x;
             x++;
             sub.value = x;
@@ -692,9 +963,9 @@
     function dropbudgetitem(itemid) {
 
         try {
-            const ref = document.getElementById("budget-items");
+            const ref = document.getElementById("bud-num-item");
             let idx = ref.value;
-            const drop = document.getElementById("item" + idx);
+            const drop = document.getElementById("budget-item" + idx);
             drop.remove();
             idx--;
             if (idx === 0) {
@@ -711,8 +982,8 @@
     function dropbudgetdetail(itemid) {
 
         try {
-            const ref = document.querySelector("#" + itemid + " [name='valitem']");
-            const ele = document.querySelector("#" + itemid + " [name='subitem']");
+            const ref = document.querySelector("#" + itemid + " [id='valitem']");
+            const ele = document.querySelector("#" + itemid + " [id='subitem']");
             let itm = ref.value;
             let des = itm.split('_')[0];
             let idx = itm.split('_')[1];
@@ -751,11 +1022,11 @@
             html = `<div id="pay-item` + j + `" class="form-floating mb-1">        
                         <div class="d-flex">
                             <div style="width: 10%;" class="form-floating mb-2">
-                                <input type="text" name="item" class="form-control item" value="` + j + `" disabled>
+                                <input type="text" name="numitem" class="form-control item" value="` + j + `" disabled>
                                 <label for="floatingInput">Item</label>
                             </div>
                             <div style="width: 30%;" class="form-floating mb-2">
-                                <select name="header"  class="form-select item" aria-label="Floating label select example" required>
+                                <select name="header" class="form-select item" aria-label="Floating label select example" required>
                                     <option></option>
                                     <option value="Adelanto">Adelanto</option>
                                     <option value="Val. semanal">Val. semanal</option>
@@ -782,7 +1053,7 @@
             html = `<div id="pay-item` + j + `" class="form-floating mb-1">
                         <div class="d-flex">
                             <div style="width: 10%;" class="form-floating mb-2">
-                                <input type="text" name="item" class="form-control item" value="` + j + `" disabled>
+                                <input type="text" name="numitem" class="form-control item" value="` + j + `" disabled>
                                 <label for="floatingInput">Item</label>
                             </div>
                             <div style="width: 30%;" class="form-floating mb-2">
@@ -801,9 +1072,9 @@
                     </div>`;
             document.getElementById("container-payment").insertAdjacentHTML("beforeend", html);
             flatpickr(".datepicker", {
-                dateFormat: "d/m/Y",
-                altInput: true,
-                altFormat: "F j, Y",
+                dateFormat: "Y/m/d",
+                //altInput: true,
+                //altFormat: "F j, Y",
                 allowInput: true,
                 locale: "es" // ? idioma español
             });
@@ -836,14 +1107,13 @@
     function addgconsideration() {
         m++;
         let html = '';
-        console.log(m);
         html = `<div id="gen-con` + m + `" class="d-flex">
                     <div style="width: 10%;" class="form-floating mb-2">
-                        <input type="text" name="num" class="form-control item" value="` + m + `" disabled>
+                        <input type="text" name="numitem" class="form-control item" value="` + m + `" disabled>
                         <label for="floatingInput">Item</label>
                     </div>
-                    <div style="width: 90%;" class="form-floating mb-2 item">
-                        <input type="text" name="description" class="form-control" required>
+                    <div style="width: 90%;" class="form-floating mb-2">
+                        <input type="text" name="description" class="item form-control" required>
                         <label for="floatingInput">Descripcion</label>
                     </div>
                 </div>`;
@@ -874,11 +1144,11 @@
         let html = '';
         html = `<div id="spc-con` + n + `" class="d-flex">
                     <div style="width: 10%;" class="form-floating mb-2">
-                        <input type="text" name="num" class="form-control item" value="` + n + `" disabled>
+                        <input type="text" name="numitem" class="form-control item" value="` + n + `" disabled>
                         <label for="floatingInput">Item</label>
                     </div>
-                    <div style="width: 90%;" class="form-floating mb-2 item">
-                        <input type="text" name="description" class="form-control" required>
+                    <div style="width: 90%;" class="form-floating mb-2">
+                        <input type="text" name="description" class="item form-control" required>
                         <label for="floatingInput">Descripcion</label>
                     </div>
                 </div>`;
@@ -935,5 +1205,160 @@
         fields.forEach(field => {
             field.classList.remove('is-valid', 'is-invalid');
         });
+    }
+    function parcialsum(index) {
+        let sbt = 0;
+        const items = document.querySelector('#budget-item' + index + ' input[id="subitem"]');
+        const tot = document.querySelector('#budget-item' + index + ' input[id="itemsub' + index + '"]');
+
+        for (let cursor = 1; cursor < items.value; cursor++) {
+            const sum = document.getElementById('subtotal' + index + '_' + cursor);
+            let s = parseFloat(sum.value);
+            s = isNaN(s) ? 0 : s;
+            sbt += s;
+            tot.value = sbt.toFixed(2);
+        }
+        subtotalsum();
+    }
+    function subtotalsum() {
+        const billable = document.getElementById('billable');
+        const coin = document.getElementById('order-currency').value;
+        const Items = document.getElementById("bud-num-item").value;
+        const sub1 = document.getElementById("subtotal1");
+        let exch = document.getElementById("exchangerate").value;
+        const sub2 = document.getElementById("subtotal2");
+        const Exo = document.getElementById("exonerated");
+        const Txb = document.getElementById("taxable");
+        const Tax = document.getElementById("tax");
+        const Tot = document.getElementById("total");
+
+        let sum = 0;
+        for (let f = 1; f <= Items; f++) {
+            const sub = document.querySelectorAll("#budget-item" + f + " input[name='subtotal']");
+            sub.forEach(num => {
+                let sma = parseFloat(num?.value || 0);
+                sum += sma;
+            });
+        }
+
+        let cur = "";
+        let subt = 0;
+        let total = 0;
+        let letters = "";
+        if (billable.checked) {
+            const base = sum;
+            const igv = base * 0.18;
+            total = base + igv;
+
+            Exo.value = "0.00";
+            Txb.value = base.toFixed(2);
+            Tax.value = igv.toFixed(2);
+            Tot.value = total.toFixed(2);
+            if (coin === '1') {
+                cur = " SOLES";
+                sub1.value = base;
+                subt = parseFloat(base * exch);
+                sub2.value = subt.toFixed(2);
+            } else if (coin === '2') {
+                cur = " DOLARES";
+                sub1.value = base;
+                subt = parseFloat(base * exch);
+                sub2.value = subt.toFixed(2);
+            }
+            letters = numtoletters(total);
+            document.getElementById('numletters').value = letters + cur;
+        } else {
+            Exo.value = sum.toFixed(2);
+            Txb.value = "0.00";
+            Tax.value = "0.00";
+            Tot.value = sum.toFixed(2);
+            if (coin === '1') {
+                cur = " SOLES";
+                sub1.value = sum;
+                subt = parseFloat(sum * exch);
+                sub2.value = subt.toFixed(2);
+            } else if (coin === '2') {
+                cur = " DOLARES";
+                sub1.value = sum;
+                subt = parseFloat(sum * exch);
+                sub2.value = subt.toFixed(2);
+            }
+            letters = numtoletters(sum);
+            document.getElementById('numletters').value = letters + cur;
+        }
+    }
+    function numtoletters(num) {
+
+        const unidades = ['', 'UNO', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'];
+        const especiales = ['DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISEIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE'];
+        const decenas = ['', 'DIEZ', 'VEINTE', 'TREINTA', 'CUARENTA', 'CINCUENTA', 'SESENTA', 'SETENTA', 'OCHENTA', 'NOVENTA'];
+        const centenas = ['', 'CIENTOS', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROCIENTOS', 'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS'];
+
+        function seccion(n) {
+            let output = "";
+
+            if (n < 10) {
+                output = unidades[n];
+            } else if (n < 20) {
+                output = especiales[n - 10];
+            } else if (n < 100) {
+                output = decenas[Math.floor(n / 10)];
+                if (n % 10 > 0) {
+                    output += " Y " + unidades[n % 10];
+                }
+            } else if (n < 1000) {
+                if (n === 100) {
+                    output = "CIEN";
+                } else {
+                    output = centenas[Math.floor(n / 100)];
+                    if (n % 100 > 0) {
+                        output += " " + seccion(n % 100);
+                    }
+                }
+            }
+
+            return output;
+        }
+
+        function convertir(num) {
+            let n = parseInt(num);
+            if (isNaN(n))
+                return "";
+
+            if (n === 0)
+                return "CERO";
+
+            let millones = Math.floor(n / 1000000);
+            let miles = Math.floor((n - (millones * 1000000)) / 1000);
+            let cientos = n % 1000;
+
+            let texto = "";
+
+            if (millones > 0) {
+                texto += (millones === 1 ? "UN MILLON" : seccion(millones) + " MILLONES") + " ";
+            }
+
+            if (miles > 0) {
+                texto += (miles === 1 ? "MIL" : seccion(miles) + " MIL") + " ";
+            }
+
+            if (cientos > 0) {
+                texto += seccion(cientos);
+            }
+
+            return texto.trim();
+        }
+
+        // Procesar número y centavos
+        num = parseFloat(num).toFixed(2);
+        let partes = num.split(".");
+        let parteEntera = partes[0];
+        let centavos = partes[1];
+
+        let letras = convertir(parteEntera);
+        letras = letras.charAt(0) + letras.slice(1);
+        letras += ` CON ` + centavos + `/100`;
+
+        return letras;
     }
 </script>

@@ -1,0 +1,340 @@
+<script>
+    document.getElementById('create').addEventListener('submit', function (event) {
+        event.preventDefault(); // Evita que el formulario se envíe
+        event.stopPropagation();
+
+        // Campos individuales
+        const companyid = document.getElementById('companyid');
+
+        const acc = document.getElementById('newaccount');
+        const typ = document.getElementById('newtype');
+        const vou = document.getElementById('newvoucherdate');
+        //const ope = document.getElementById('newoperationdate');
+        const per = document.getElementById('newperiod');
+        const nop = document.getElementById('newoperationnum');
+        //const des = document.getElementById('newdescription');
+        const ben = document.getElementById('newbeneficiary');
+        //const glo = document.getElementById('newgloss');
+        const sub = document.getElementById('newsubtotal');
+        const exr = document.getElementById('newexrate');
+        const tot = document.getElementById('newtotal');
+
+        const fields = [acc, typ, vou, per, nop, ben, sub, exr, tot];
+
+        // Resetear clases previas
+        fields.forEach(field => {
+            field.classList.remove('is-valid', 'is-invalid');
+        });
+
+        // Validar campos
+        if (companyid.value == 0) {
+            Swal.fire({
+                title: '¡Error!',
+                text: 'Acción no permitida, debe seleccionar una empresa.',
+                icon: 'error',
+                timer: 2500,
+                showConfirmButton: false,
+                //confirmButtonText: 'Ok',
+                background: '#f0f9ff',
+                confirmButtonColor: '#3085d6'
+            }).then(() => {
+                window.location.href = 'movement?action=load';
+            });
+
+        } else {
+            fields.forEach(field => {
+                if (field.value === "") {
+                    field.classList.add('is-invalid');
+                } else {
+                    field.classList.add('is-valid');
+                }
+            });
+            if (
+                    acc.value.trim() !== "" &&
+                    typ.value.trim() !== "" &&
+                    vou.value.trim() !== "" &&
+                    per.value.trim() !== "" &&
+                    nop.value.trim() !== "" &&
+                    ben.value.trim() !== "" &&
+                    sub.value.trim() !== "" &&
+                    exr.value.trim() !== "" &&
+                    tot.value.trim() !== ""
+                    ) {
+                createmovement(); // Aquí puedes enviar el formulario
+            }
+        }
+    });
+    document.getElementById('edit').addEventListener('submit', function (event) {
+        event.preventDefault(); // Evita que el formulario se envíe
+        event.stopPropagation();
+
+        // Campos individuales
+        const bank = document.getElementById('editbanco');
+        const type = document.getElementById('edittipo');
+        const coin = document.getElementById('editmoneda');
+        const num = document.getElementById('editcuenta');
+        //const cci = document.getElementById('editcci');
+
+        // Resetear clases previas
+        [bank, type, coin, num].forEach(field => {
+            field.classList.remove('is-valid', 'is-invalid');
+        });
+
+        // Validar campos
+        if (bank.value === "") {
+            bank.classList.add('is-invalid');
+        } else {
+            bank.classList.add('is-valid');
+        }
+        if (type.value === "") {
+            type.classList.add('is-invalid');
+        } else {
+            type.classList.add('is-valid');
+        }
+        if (coin.value === "") {
+            coin.classList.add('is-invalid');
+        } else {
+            coin.classList.add('is-valid');
+        }
+        if (num.value.trim() === "") {
+            num.classList.add('is-invalid');
+        } else {
+            num.classList.add('is-valid');
+        }
+
+        // Comprobar si todo es válido
+        if (
+                bank.value.trim() !== "" &&
+                type.value.trim() !== "" &&
+                coin.value.trim() !== "" &&
+                num.value.trim() !== ""
+                ) {
+            editaccount(); // Aquí puedes enviar el formulario
+        }
+    });
+    document.getElementById('querymovements').addEventListener('submit', function (event) {
+        event.preventDefault(); // Evita que el formulario se envíe
+        event.stopPropagation();
+        const company = document.getElementById('company').value;
+        const acc = document.getElementById('queryaccount').value;
+        const yea = document.getElementById('queryyear').value;
+        const per = document.getElementById('queryperiod').value;
+
+        fetch('movement?action=query', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'queryaccount=' + acc +
+                    '&queryyear=' + yea +
+                    '&queryperiod=' + per
+        }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = 'movement?action=load&company=' + company;
+                    } else {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                            icon: 'error',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            window.location.href = 'movement?action=load&company=' + company;
+                        });
+                    }
+                })
+                .catch(error => console.error(error));
+    });
+    function createmovement() {
+
+        let company = document.getElementById('company').value;
+        let acc = document.getElementById('newaccount').value;
+        let typ = document.getElementById('newtype').value;
+        let vou = document.getElementById('newvoucherdate').value;
+        let ope = document.getElementById('newoperationdate').value;
+        let per = document.getElementById('newperiod').value;
+        let nop = document.getElementById('newoperationnum').value;
+        let des = document.getElementById('newdescription').value;
+        let ben = document.getElementById('newbeneficiary').value;
+        let glo = document.getElementById('newgloss').value;
+        let sub = document.getElementById('newsubtotal').value;
+        let exr = document.getElementById('newexrate').value;
+        let tot = document.getElementById('newtotal').value;
+
+        fetch('movement?action=create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'newaccount=' + acc +
+                    '&newtype=' + typ +
+                    '&newvoucherdate=' + vou +
+                    '&newoperationdate=' + ope +
+                    '&newperiod=' + per +
+                    '&newoperationnum=' + nop +
+                    '&newdescription=' + des +
+                    '&newbeneficiary=' + ben +
+                    '&newgloss=' + glo +
+                    '&newsubtotal=' + sub +
+                    '&newexrate=' + exr +
+                    '&newtotal=' + tot
+        }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: '¡Éxito!',
+                            text: 'Se creó el movimiento correctamente.',
+                            icon: 'info',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            window.location.href = 'movement?action=load&company=' + company;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                            icon: 'error',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            window.location.href = 'movement?action=load&company=' + company;
+                        });
+                    }
+                })
+                .catch(error => console.error(error));
+    }
+
+    function editaccount() {
+
+        let company = document.getElementById('company').value;
+
+        let accountid = document.getElementById('editid').value;
+        let bank = document.getElementById('editbanco').value;
+        let type = document.getElementById('edittipo').value;
+        let coin = document.getElementById('editmoneda').value;
+        let num = document.getElementById('editcuenta').value;
+        let cci = document.getElementById('editcci').value;
+
+        fetch('account?action=update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'accountid=' + accountid +
+                    '&editbanco=' + bank +
+                    '&edittipo=' + type +
+                    '&editmoneda=' + coin +
+                    '&editcuenta=' + num +
+                    '&editcci=' + cci
+        }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: '¡Éxito!',
+                            text: 'Se actualizó la cuenta correctamente.',
+                            icon: 'info',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            window.location.href = 'account?action=load&company=' + company;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                            icon: 'error',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            //confirmButtonText: 'Ok',
+                            background: '#f0f9ff',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    }
+                })
+                .catch(error => console.error(error));
+    }
+    function deleteaccount(id) {
+
+        let company = document.getElementById('company').value;
+
+        Swal.fire({
+            title: '¿Estás seguro de eliminar esta cuenta?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, continuar',
+            cancelButtonText: 'No, cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('account?action=delete&id=' + id)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: '¡Éxito!',
+                                    text: 'Se eliminó la cuenta correctamente.',
+                                    icon: 'info',
+                                    timer: 2500,
+                                    showConfirmButton: false,
+                                    //confirmButtonText: 'Ok',
+                                    background: '#f0f9ff',
+                                    confirmButtonColor: '#3085d6'
+                                }).then(() => {
+                                    window.location.href = 'account?action=load&company=' + company;
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: '¡Error!',
+                                    text: 'Ocurrió un error reintente o pongase en contacto con el administrador del sistema.',
+                                    icon: 'error',
+                                    timer: 2500,
+                                    showConfirmButton: false,
+                                    //confirmButtonText: 'Ok',
+                                    background: '#f0f9ff',
+                                    confirmButtonColor: '#3085d6'
+                                });
+                            }
+                        })
+                        .catch(error => console.error(error));
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire(
+                        'Cancelado',
+                        'La acción fue cancelada :)',
+                        'error'
+                        );
+            }
+        });
+    }
+    function searchmovement() {
+
+    }
+    function loadcompany(company) {
+        Swal.fire({
+            title: '¡Éxito!',
+            text: 'Seleccionaste la empresa: ' + company,
+            icon: 'info',
+            timer: 1000,
+            showConfirmButton: false,
+//confirmButtonText: 'Ok',
+            background: '#f0f9ff',
+            confirmButtonColor: '#3085d6'
+        }).then(() => {
+            window.location.href = 'movement?action=load&company=' + company;
+        });
+    }
+</script>

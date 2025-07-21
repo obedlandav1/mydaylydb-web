@@ -125,9 +125,9 @@ public class Account extends HttpServlet {
         List<AccountEntity> listaCuentas = objAccount.SelectAllAccountsByCompany(companyEntity.getId());
 
         request.setAttribute("companies", objCompany.SelectAllCompanyName());
-        request.setAttribute("banks", objCombo.SelectAllBankName());
-        request.setAttribute("accounttype", objCombo.SelectAllAccountType());
-        request.setAttribute("cointype", objCombo.SelectAllCurrencyType());
+        request.setAttribute("banks", objCombo.SelectAllBanksName());
+        request.setAttribute("accounttype", objCombo.SelectAllAccountsType());
+        request.setAttribute("cointype", objCombo.SelectAllCurrenciesType());
         request.setAttribute("showaccounts", !listaCuentas.isEmpty());
         request.setAttribute("accounts", listaCuentas);
         
